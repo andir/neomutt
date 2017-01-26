@@ -30,48 +30,47 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include "mutt.h"
-#include "mime.h"
 #include "charset.h"
+#include "mime.h"
 #include "rfc2047.h"
 #include "rfc2231.h"
 
 #include <ctype.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct rfc2231_parameter
 {
   char *attribute;
   char *value;
-  int  index;
-  int  encoded;
-  struct rfc2231_parameter 
-       *next;
+  int index;
+  int encoded;
+  struct rfc2231_parameter *next;
 };
 
-static char *rfc2231_get_charset (char *, char *, size_t);
-static struct rfc2231_parameter *rfc2231_new_parameter (void);
-static void rfc2231_decode_one (char *, char *);
-static void rfc2231_free_parameter (struct rfc2231_parameter **);
-static void rfc2231_join_continuations (PARAMETER **, struct rfc2231_parameter *);
-static void rfc2231_list_insert (struct rfc2231_parameter **, struct rfc2231_parameter *);
+static char *rfc2231_get_charset(char *, char *, size_t);
+static struct rfc2231_parameter *rfc2231_new_parameter(void);
+static void rfc2231_decode_one(char *, char *);
+static void rfc2231_free_parameter(struct rfc2231_parameter **);
+static void rfc2231_join_continuations(PARAMETER **, struct rfc2231_parameter *);
+static void rfc2231_list_insert(struct rfc2231_parameter **, struct rfc2231_parameter *);
 
-static void purge_empty_parameters (PARAMETER **headp)
+static void purge_empty_parameters(PARAMETER **headp)
 {
   PARAMETER *p, *q, **last;
-  
+
   for (last = headp, p = *headp; p; p = q)
   {
     q = p->next;
     if (!p->attribute || !p->value)
     {
-      *last = q;
+      *last   = q;
       p->next = NULL;
-      mutt_free_parameter (&p);
+      mutt_free_parameter(&p);
     }
     else
       last = &p->next;
@@ -79,7 +78,7 @@ static void purge_empty_parameters (PARAMETER **headp)
 }
 
 
-void rfc2231_decode_parameters (PARAMETER **headp)
+void rfc2231_decode_parameters(PARAMETER **headp)
 {
   PARAMETER *head = NULL;
   PARAMETER **last;
@@ -93,21 +92,21 @@ void rfc2231_decode_parameters (PARAMETER **headp)
 
   int encoded;
   int index;
-  short dirty = 0;	/* set to 1 when we may have created
+  short dirty = 0; /* set to 1 when we may have created
 			 * empty parameters.
 			 */
-  
-  if (!headp) return;
 
-  purge_empty_parameters (headp);
-  
+  if (!headp)
+    return;
+
+  purge_empty_parameters(headp);
+
   for (last = &head, p = *headp; p; p = q)
   {
     q = p->next;
 
-    if (!(s = strchr (p->attribute, '*')))
+    if (!(s = strchr(p->attribute, '*')))
     {
-
       /* 
        * Using RFC 2047 encoding in MIME parameters is explicitly
        * forbidden by that document.  Nevertheless, it's being
@@ -115,117 +114,117 @@ void rfc2231_decode_parameters (PARAMETER **headp)
        * Internet Gateways.  So we actually decode it.
        */
 
-      if (option (OPTRFC2047PARAMS) && p->value && strstr (p->value, "=?"))
-	rfc2047_decode (&p->value);
+      if (option(OPTRFC2047PARAMS) && p->value && strstr(p->value, "=?"))
+        rfc2047_decode(&p->value);
       else if (AssumedCharset && *AssumedCharset)
-        convert_nonmime_string (&p->value);
+        convert_nonmime_string(&p->value);
 
-      *last = p;
-      last = &p->next;
+      *last   = p;
+      last    = &p->next;
       p->next = NULL;
     }
     else if (*(s + 1) == '\0')
     {
       *s = '\0';
-      
-      s = rfc2231_get_charset (p->value, charset, sizeof (charset));
-      rfc2231_decode_one (p->value, s);
-      mutt_convert_string (&p->value, charset, Charset, MUTT_ICONV_HOOK_FROM);
-      mutt_filter_unprintable (&p->value);
 
-      *last = p;
-      last = &p->next;
+      s = rfc2231_get_charset(p->value, charset, sizeof(charset));
+      rfc2231_decode_one(p->value, s);
+      mutt_convert_string(&p->value, charset, Charset, MUTT_ICONV_HOOK_FROM);
+      mutt_filter_unprintable(&p->value);
+
+      *last   = p;
+      last    = &p->next;
       p->next = NULL;
-      
+
       dirty = 1;
     }
     else
     {
-      *s = '\0'; s++; /* let s point to the first character of index. */
-      for (t = s; *t && isdigit ((unsigned char) *t); t++)
-	;
+      *s = '\0';
+      s++; /* let s point to the first character of index. */
+      for (t = s; *t && isdigit((unsigned char) *t); t++)
+        ;
       encoded = (*t == '*');
-      *t = '\0';
+      *t      = '\0';
 
-      index = atoi (s);
+      index = atoi(s);
 
-      conttmp = rfc2231_new_parameter ();
+      conttmp            = rfc2231_new_parameter();
       conttmp->attribute = p->attribute;
-      conttmp->value = p->value;
-      conttmp->encoded = encoded;
-      conttmp->index = index;
-      
-      p->attribute = NULL;
-      p->value = NULL;
-      FREE (&p);
+      conttmp->value     = p->value;
+      conttmp->encoded   = encoded;
+      conttmp->index     = index;
 
-      rfc2231_list_insert (&conthead, conttmp);
+      p->attribute = NULL;
+      p->value     = NULL;
+      FREE(&p);
+
+      rfc2231_list_insert(&conthead, conttmp);
     }
   }
 
   if (conthead)
   {
-    rfc2231_join_continuations (last, conthead);
+    rfc2231_join_continuations(last, conthead);
     dirty = 1;
   }
-  
+
   *headp = head;
-  
+
   if (dirty)
-    purge_empty_parameters (headp);
-}
-  
-static struct rfc2231_parameter *rfc2231_new_parameter (void)
-{
-  return safe_calloc (sizeof (struct rfc2231_parameter), 1);
+    purge_empty_parameters(headp);
 }
 
-static void rfc2231_free_parameter (struct rfc2231_parameter **p)
+static struct rfc2231_parameter *rfc2231_new_parameter(void)
+{
+  return safe_calloc(sizeof(struct rfc2231_parameter), 1);
+}
+
+static void rfc2231_free_parameter(struct rfc2231_parameter **p)
 {
   if (*p)
   {
-    FREE (&(*p)->attribute);
-    FREE (&(*p)->value);
-    FREE (p);		/* __FREE_CHECKED__ */
+    FREE(&(*p)->attribute);
+    FREE(&(*p)->value);
+    FREE(p); /* __FREE_CHECKED__ */
   }
 }
 
-static char *rfc2231_get_charset (char *value, char *charset, size_t chslen)
+static char *rfc2231_get_charset(char *value, char *charset, size_t chslen)
 {
   char *t, *u;
-  
-  if (!(t = strchr (value, '\'')))
+
+  if (!(t = strchr(value, '\'')))
   {
     charset[0] = '\0';
     return value;
   }
-  
+
   *t = '\0';
-  strfcpy (charset, value, chslen);
-  
-  if ((u = strchr (t + 1, '\'')))
+  strfcpy(charset, value, chslen);
+
+  if ((u = strchr(t + 1, '\'')))
     return u + 1;
   else
     return t + 1;
 }
 
-static void rfc2231_decode_one (char *dest, char *src)
+static void rfc2231_decode_one(char *dest, char *src)
 {
   char *d;
 
   for (d = dest; *src; src++)
   {
-    if (*src == '%' &&
-        isxdigit ((unsigned char) *(src + 1)) &&
-        isxdigit ((unsigned char) *(src + 2)))
+    if (*src == '%' && isxdigit((unsigned char) *(src + 1)) &&
+        isxdigit((unsigned char) *(src + 2)))
     {
-      *d++ = (hexval (*(src + 1)) << 4) | (hexval (*(src + 2)));
+      *d++ = (hexval(*(src + 1)) << 4) | (hexval(*(src + 2)));
       src += 2;
     }
     else
       *d++ = *src;
   }
-  
+
   *d = '\0';
 }
 
@@ -235,31 +234,29 @@ static void rfc2231_decode_one (char *dest, char *src)
  * Secondary sorting key: index
  */
 
-static void rfc2231_list_insert (struct rfc2231_parameter **list,
-				 struct rfc2231_parameter *par)
+static void rfc2231_list_insert(struct rfc2231_parameter **list, struct rfc2231_parameter *par)
 {
   struct rfc2231_parameter **last = list;
-  struct rfc2231_parameter *p = *list;
+  struct rfc2231_parameter *p     = *list;
   int c;
 
   while (p)
   {
-    c = strcmp (par->attribute, p->attribute);
+    c = strcmp(par->attribute, p->attribute);
     if ((c < 0) || (c == 0 && par->index <= p->index))
       break;
 
     last = &p->next;
-    p = p->next;
+    p    = p->next;
   }
 
   par->next = p;
-  *last = par;
+  *last     = par;
 }
 
 /* process continuation parameters */
 
-static void rfc2231_join_continuations (PARAMETER **head,
-					struct rfc2231_parameter *par)
+static void rfc2231_join_continuations(PARAMETER **head, struct rfc2231_parameter *par)
 {
   struct rfc2231_parameter *q;
 
@@ -270,48 +267,49 @@ static void rfc2231_join_continuations (PARAMETER **head,
   int encoded;
 
   size_t l, vl;
-  
+
   while (par)
   {
-    value = NULL; l = 0;
-    
-    strfcpy (attribute, par->attribute, sizeof (attribute));
+    value = NULL;
+    l     = 0;
+
+    strfcpy(attribute, par->attribute, sizeof(attribute));
 
     if ((encoded = par->encoded))
-      valp = rfc2231_get_charset (par->value, charset, sizeof (charset));
+      valp = rfc2231_get_charset(par->value, charset, sizeof(charset));
     else
       valp = par->value;
 
-    do 
+    do
     {
       if (encoded && par->encoded)
-	rfc2231_decode_one (par->value, valp);
-      
-      vl = strlen (par->value);
-      
-      safe_realloc (&value, l + vl + 1);
-      strcpy (value + l, par->value);	/* __STRCPY_CHECKED__ */
+        rfc2231_decode_one(par->value, valp);
+
+      vl = strlen(par->value);
+
+      safe_realloc(&value, l + vl + 1);
+      strcpy(value + l, par->value); /* __STRCPY_CHECKED__ */
       l += vl;
 
       q = par->next;
-      rfc2231_free_parameter (&par);
+      rfc2231_free_parameter(&par);
       if ((par = q))
-	valp = par->value;
-    } while (par && !strcmp (par->attribute, attribute));
-    
+        valp = par->value;
+    } while (par && !strcmp(par->attribute, attribute));
+
     if (value)
     {
       if (encoded)
-	mutt_convert_string (&value, charset, Charset, MUTT_ICONV_HOOK_FROM);
-      *head = mutt_new_parameter ();
-      (*head)->attribute = safe_strdup (attribute);
-      (*head)->value = value;
-      head = &(*head)->next;
+        mutt_convert_string(&value, charset, Charset, MUTT_ICONV_HOOK_FROM);
+      *head              = mutt_new_parameter();
+      (*head)->attribute = safe_strdup(attribute);
+      (*head)->value     = value;
+      head               = &(*head)->next;
     }
   }
 }
 
-int rfc2231_encode_string (char **pd)
+int rfc2231_encode_string(char **pd)
 {
   int ext = 0, encode = 0;
   char *charset, *s, *t, *e, *d = 0;
@@ -327,57 +325,54 @@ int rfc2231_encode_string (char **pd)
   for (s = *pd; *s; s++)
     if (*s & 0x80)
       break;
-  
+
   if (!*s)
     return 0;
-  
+
   if (!Charset || !SendCharset ||
-      !(charset = mutt_choose_charset (Charset, SendCharset,
-				  *pd, strlen (*pd), &d, &dlen)))
+      !(charset = mutt_choose_charset(Charset, SendCharset, *pd, strlen(*pd), &d, &dlen)))
   {
-    charset = safe_strdup (Charset ? Charset : "unknown-8bit");
-    d = *pd;
-    dlen = strlen (d);
+    charset = safe_strdup(Charset ? Charset : "unknown-8bit");
+    d       = *pd;
+    dlen    = strlen(d);
   }
 
-  if (!mutt_is_us_ascii (charset))
+  if (!mutt_is_us_ascii(charset))
     encode = 1;
 
   for (s = d, slen = dlen; slen; s++, slen--)
     if (*s < 0x20 || *s >= 0x7f)
       encode = 1, ++ext;
-    else if (strchr (MimeSpecials, *s) || strchr ("*'%", *s))
+    else if (strchr(MimeSpecials, *s) || strchr("*'%", *s))
       ++ext;
 
   if (encode)
   {
-    e = safe_malloc (dlen + 2*ext + strlen (charset) + 3);
-    sprintf (e, "%s''", charset);	/* __SPRINTF_CHECKED__ */
-    t = e + strlen (e);
+    e = safe_malloc(dlen + 2 * ext + strlen(charset) + 3);
+    sprintf(e, "%s''", charset); /* __SPRINTF_CHECKED__ */
+    t = e + strlen(e);
     for (s = d, slen = dlen; slen; s++, slen--)
-      if (*s < 0x20 || *s >= 0x7f ||
-	  strchr (MimeSpecials, *s) || strchr ("*'%", *s))
+      if (*s < 0x20 || *s >= 0x7f || strchr(MimeSpecials, *s) || strchr("*'%", *s))
       {
-	sprintf (t, "%%%02X", (unsigned char)*s);
-	t += 3;
+        sprintf(t, "%%%02X", (unsigned char) *s);
+        t += 3;
       }
       else
-	*t++ = *s;
-    *t = '\0';
+        *t++ = *s;
+    *t       = '\0';
 
     if (d != *pd)
-      FREE (&d);
-    FREE (pd);		/* __FREE_CHECKED__ */
+      FREE(&d);
+    FREE(pd); /* __FREE_CHECKED__ */
     *pd = e;
   }
   else if (d != *pd)
   {
-    FREE (pd);		/* __FREE_CHECKED__ */
+    FREE(pd); /* __FREE_CHECKED__ */
     *pd = d;
   }
-  
-  FREE (&charset);
-  
+
+  FREE(&charset);
+
   return encode;
 }
-

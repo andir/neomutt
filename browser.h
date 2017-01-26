@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 #ifndef _BROWSER_H
 #define _BROWSER_H 1
@@ -35,9 +35,9 @@ struct folder_file
   char *name;
   char *desc;
 
-  short new;               /* true if mailbox has "new mail" */
-  int msg_count;           /* total number of messages */
-  int msg_unread;          /* number of unread messages */
+  short new;      /* true if mailbox has "new mail" */
+  int msg_count;  /* total number of messages */
+  int msg_unread; /* number of unread messages */
 
 #ifdef USE_IMAP
   char delim;
@@ -57,8 +57,8 @@ struct folder_file
 struct browser_state
 {
   struct folder_file *entry;
-  unsigned int entrylen;	/* number of real entries */
-  unsigned int entrymax;	/* max entry */
+  unsigned int entrylen; /* number of real entries */
+  unsigned int entrymax; /* max entry */
 #ifdef USE_IMAP
   short imap_browse;
   char *folder;

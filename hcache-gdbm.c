@@ -21,16 +21,15 @@
 
 #include "config.h"
 
-#include "hcache-backend.h"
-#include "mutt.h"
 #include <gdbm.h>
+#include "mutt.h"
+#include "hcache-backend.h"
 
-static void *
-hcache_gdbm_open(const char *path)
+static void *hcache_gdbm_open(const char *path)
 {
   int pagesize;
 
-  if (mutt_atoi (HeaderCachePageSize, &pagesize) < 0 || pagesize <= 0)
+  if (mutt_atoi(HeaderCachePageSize, &pagesize) < 0 || pagesize <= 0)
     pagesize = 16384;
 
   GDBM_FILE db = gdbm_open((char *) path, pagesize, GDBM_WRCREAT, 00600, NULL);
@@ -41,8 +40,7 @@ hcache_gdbm_open(const char *path)
   return gdbm_open((char *) path, pagesize, GDBM_READER, 00600, NULL);
 }
 
-static void *
-hcache_gdbm_fetch(void *ctx, const char *key, size_t keylen)
+static void *hcache_gdbm_fetch(void *ctx, const char *key, size_t keylen)
 {
   datum dkey;
   datum data;
@@ -52,20 +50,18 @@ hcache_gdbm_fetch(void *ctx, const char *key, size_t keylen)
 
   GDBM_FILE db = ctx;
 
-  dkey.dptr = (char *)key;
+  dkey.dptr  = (char *) key;
   dkey.dsize = keylen;
-  data = gdbm_fetch(db, dkey);
+  data       = gdbm_fetch(db, dkey);
   return data.dptr;
 }
 
-static void
-hcache_gdbm_free(void *vctx, void **data)
+static void hcache_gdbm_free(void *vctx, void **data)
 {
-    FREE(data); /* __FREE_CHECKED__ */
+  FREE(data); /* __FREE_CHECKED__ */
 }
 
-static int
-hcache_gdbm_store(void *ctx, const char *key, size_t keylen, void *data, size_t dlen)
+static int hcache_gdbm_store(void *ctx, const char *key, size_t keylen, void *data, size_t dlen)
 {
   datum dkey;
   datum databuf;
@@ -75,17 +71,16 @@ hcache_gdbm_store(void *ctx, const char *key, size_t keylen, void *data, size_t 
 
   GDBM_FILE db = ctx;
 
-  dkey.dptr = (char *)key;
+  dkey.dptr  = (char *) key;
   dkey.dsize = keylen;
 
   databuf.dsize = dlen;
-  databuf.dptr = data;
+  databuf.dptr  = data;
 
   return gdbm_store(db, dkey, databuf, GDBM_REPLACE);
 }
 
-static int
-hcache_gdbm_delete(void *ctx, const char *key, size_t keylen)
+static int hcache_gdbm_delete(void *ctx, const char *key, size_t keylen)
 {
   datum dkey;
 
@@ -94,14 +89,13 @@ hcache_gdbm_delete(void *ctx, const char *key, size_t keylen)
 
   GDBM_FILE db = ctx;
 
-  dkey.dptr = (char *)key;
+  dkey.dptr  = (char *) key;
   dkey.dsize = keylen;
 
   return gdbm_delete(db, dkey);
 }
 
-static void
-hcache_gdbm_close(void **ctx)
+static void hcache_gdbm_close(void **ctx)
 {
   if (!ctx)
     return;
@@ -110,11 +104,9 @@ hcache_gdbm_close(void **ctx)
   gdbm_close(db);
 }
 
-static const char *
-hcache_gdbm_backend(void)
+static const char *hcache_gdbm_backend(void)
 {
   return gdbm_version;
 }
 
 HCACHE_BACKEND_OPS(gdbm)
-

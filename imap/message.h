@@ -15,7 +15,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 /* message.c data structures */
 
@@ -36,7 +36,7 @@ typedef struct imap_header_data
 
   unsigned int parsed : 1;
 
-  unsigned int uid;	/* 32-bit Message UID */
+  unsigned int uid; /* 32-bit Message UID */
   LIST *keywords;
 } IMAP_HEADER_DATA;
 
@@ -44,13 +44,13 @@ typedef struct
 {
   unsigned int sid;
 
-  IMAP_HEADER_DATA* data;
+  IMAP_HEADER_DATA *data;
 
   time_t received;
   long content_length;
 } IMAP_HEADER;
 
 /* -- macros -- */
-#define HEADER_DATA(ph) ((IMAP_HEADER_DATA*) ((ph)->data))
+#define HEADER_DATA(ph) ((IMAP_HEADER_DATA *) ((ph)->data))
 
 #endif /* MESSAGE_H */

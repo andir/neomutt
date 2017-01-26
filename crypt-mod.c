@@ -17,7 +17,7 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include "crypt-mod.h"
@@ -34,20 +34,20 @@ struct crypt_module
 static crypt_module_t modules;
 
 /* Register a new crypto module. */
-void crypto_module_register (crypt_module_specs_t specs)
+void crypto_module_register(crypt_module_specs_t specs)
 {
-  crypt_module_t module_new = safe_malloc (sizeof (*module_new));
+  crypt_module_t module_new = safe_malloc(sizeof(*module_new));
 
   module_new->specs = specs;
-  module_new->next = modules;
+  module_new->next  = modules;
   if (modules)
     modules->prevp = &module_new->next;
-  modules = module_new;
+  modules          = module_new;
 }
 
 /* Return the crypto module specs for IDENTIFIER.  This function is
    usually used via the CRYPT_MOD_CALL[_CHECK] macros. */
-crypt_module_specs_t crypto_module_lookup (int identifier)
+crypt_module_specs_t crypto_module_lookup(int identifier)
 {
   crypt_module_t module = modules;
 

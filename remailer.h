@@ -17,7 +17,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 /*
  * Mixmaster support for Mutt
@@ -25,10 +25,10 @@
 
 #ifdef MIXMASTER
 
-#define MIX_CAP_COMPRESS  (1 << 0)
+#define MIX_CAP_COMPRESS (1 << 0)
 #define MIX_CAP_MIDDLEMAN (1 << 1)
-#define MIX_CAP_NEWSPOST  (1 << 2)
-#define MIX_CAP_NEWSMAIL  (1 << 3)
+#define MIX_CAP_NEWSPOST (1 << 2)
+#define MIX_CAP_NEWSMAIL (1 << 3)
 
 /* Mixmaster's maximum chain length.  Don't change this. */
 
@@ -54,9 +54,9 @@ struct mixchain
 
 typedef struct mixchain MIXCHAIN;
 
-int mix_send_message (LIST *, const char *);
-int mix_check_message (HEADER *msg);
-void mix_make_chain (LIST **, int *);
+int mix_send_message(LIST *, const char *);
+int mix_check_message(HEADER *msg);
+void mix_make_chain(LIST **, int *);
 
 #endif /* MIXMASTER */
 

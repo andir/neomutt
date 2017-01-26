@@ -14,10 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
-WHERE void (*mutt_error) (const char *, ...);
-WHERE void (*mutt_message) (const char *, ...);
+WHERE void (*mutt_error)(const char *, ...);
+WHERE void (*mutt_message)(const char *, ...);
 
 WHERE CONTEXT *Context;
 
@@ -61,12 +61,12 @@ WHERE char *HistFile;
 WHERE char *Homedir;
 WHERE char *Hostname;
 #ifdef USE_IMAP
-WHERE char *ImapAuthenticators INITVAL (NULL);
-WHERE char *ImapDelimChars INITVAL (NULL);
+WHERE char *ImapAuthenticators INITVAL(NULL);
+WHERE char *ImapDelimChars INITVAL(NULL);
 WHERE char *ImapHeaders;
-WHERE char *ImapLogin INITVAL (NULL);
-WHERE char *ImapPass INITVAL (NULL);
-WHERE char *ImapUser INITVAL (NULL);
+WHERE char *ImapLogin INITVAL(NULL);
+WHERE char *ImapPass INITVAL(NULL);
+WHERE char *ImapUser INITVAL(NULL);
 #endif
 WHERE char *Inbox;
 WHERE char *Ispell;
@@ -89,8 +89,8 @@ WHERE char *MhUnseen;
 WHERE char *MsgFmt;
 
 #ifdef USE_SOCKET
-WHERE char *Preconnect INITVAL (NULL);
-WHERE char *Tunnel INITVAL (NULL);
+WHERE char *Preconnect INITVAL(NULL);
+WHERE char *Tunnel INITVAL(NULL);
 WHERE short NetInc;
 #endif /* USE_SOCKET */
 
@@ -99,7 +99,7 @@ WHERE char *Mixmaster;
 WHERE char *MixEntryFormat;
 #endif
 
-WHERE LIST *Muttrc INITVAL (0);
+WHERE LIST *Muttrc INITVAL(0);
 #ifdef USE_NNTP
 WHERE char *GroupFormat;
 WHERE char *Inews;
@@ -116,11 +116,11 @@ WHERE char *Pager;
 WHERE char *PagerFmt;
 WHERE char *PipeSep;
 #ifdef USE_POP
-WHERE char *PopAuthenticators INITVAL (NULL);
+WHERE char *PopAuthenticators INITVAL(NULL);
 WHERE short PopCheckTimeout;
 WHERE char *PopHost;
-WHERE char *PopPass INITVAL (NULL);
-WHERE char *PopUser INITVAL (NULL);
+WHERE char *PopPass INITVAL(NULL);
+WHERE char *PopUser INITVAL(NULL);
 #endif
 WHERE char *PostIndentString;
 WHERE char *Postponed;
@@ -144,20 +144,20 @@ WHERE char *SidebarIndentString;
 WHERE char *Signature;
 WHERE char *SimpleSearch;
 #if USE_SMTP
-WHERE char *SmtpAuthenticators INITVAL (NULL);
-WHERE char *SmtpPass INITVAL (NULL);
-WHERE char *SmtpUrl INITVAL (NULL);
+WHERE char *SmtpAuthenticators INITVAL(NULL);
+WHERE char *SmtpPass INITVAL(NULL);
+WHERE char *SmtpUrl INITVAL(NULL);
 #endif /* USE_SMTP */
 WHERE char *Spoolfile;
 WHERE char *SpamSep;
 #if defined(USE_SSL)
-WHERE char *SslCertFile INITVAL (NULL);
-WHERE char *SslClientCert INITVAL (NULL);
-WHERE char *SslEntropyFile INITVAL (NULL);
-WHERE char *SslCiphers INITVAL (NULL);
+WHERE char *SslCertFile INITVAL(NULL);
+WHERE char *SslClientCert INITVAL(NULL);
+WHERE char *SslEntropyFile INITVAL(NULL);
+WHERE char *SslCiphers INITVAL(NULL);
 #ifdef USE_SSL_GNUTLS
 WHERE short SslDHPrimeBits;
-WHERE char *SslCACertFile INITVAL (NULL);
+WHERE char *SslCACertFile INITVAL(NULL);
 #endif
 #endif
 WHERE mbchar_table *StChars;
@@ -211,19 +211,19 @@ WHERE REPLACE_LIST *SubjectRxList INITVAL(0);
 
 /* bit vector for boolean variables */
 #ifdef MAIN_C
-unsigned char Options[(OPTMAX + 7)/8];
+unsigned char Options[(OPTMAX + 7) / 8];
 #else
 extern unsigned char Options[];
 #endif
 
 /* bit vector for the yes/no/ask variable type */
 #ifdef MAIN_C
-unsigned char QuadOptions[(OPT_MAX*2 + 7) / 8];
+unsigned char QuadOptions[(OPT_MAX * 2 + 7) / 8];
 #else
 extern unsigned char QuadOptions[];
 #endif
 
-WHERE unsigned short Counter INITVAL (0);
+WHERE unsigned short Counter INITVAL(0);
 
 #ifdef USE_NNTP
 WHERE short NewsPollTimeout;
@@ -239,7 +239,7 @@ WHERE short ReadInc;
 WHERE short ReflowWrap;
 WHERE short SaveHist;
 WHERE short SendmailWait;
-WHERE short SleepTime INITVAL (1);
+WHERE short SleepTime INITVAL(1);
 WHERE short SkipQuotedOffset;
 WHERE short TimeInc;
 WHERE short Timeout;
@@ -254,7 +254,7 @@ WHERE short ScoreThresholdFlag;
 #ifdef USE_SIDEBAR
 WHERE short SidebarWidth INITVAL(0);
 WHERE LIST *SidebarWhitelist INITVAL(0);
-WHERE int SidebarNeedsRedraw INITVAL (0);
+WHERE int SidebarNeedsRedraw INITVAL(0);
 #endif
 
 #ifdef USE_IMAP
@@ -263,14 +263,14 @@ WHERE short ImapPipelineDepth;
 #endif
 
 /* flags for received signals */
-WHERE SIG_ATOMIC_VOLATILE_T SigAlrm INITVAL (0);
-WHERE SIG_ATOMIC_VOLATILE_T SigInt INITVAL (0);
-WHERE SIG_ATOMIC_VOLATILE_T SigWinch INITVAL (0);
+WHERE SIG_ATOMIC_VOLATILE_T SigAlrm INITVAL(0);
+WHERE SIG_ATOMIC_VOLATILE_T SigInt INITVAL(0);
+WHERE SIG_ATOMIC_VOLATILE_T SigWinch INITVAL(0);
 
 WHERE int CurrentMenu;
 
-WHERE ALIAS *Aliases INITVAL (0);
-WHERE LIST *UserHeader INITVAL (0);
+WHERE ALIAS *Aliases INITVAL(0);
+WHERE LIST *UserHeader INITVAL(0);
 
 /*-- formerly in pgp.h --*/
 WHERE REGEXP PgpGoodSign;
@@ -329,24 +329,29 @@ WHERE char *NotmuchQueryWindowCurrentSearch;
 #endif
 
 
-
 #ifdef MAIN_C
-const char * const Weekdays[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
-const char * const Months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "ERR" };
+const char *const Weekdays[] = {"Sun", "Mon", "Tue", "Wed",
+                                "Thu", "Fri", "Sat"};
+const char *const Months[] = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul",
+                              "Aug", "Sep", "Oct", "Nov", "Dec", "ERR"};
 
-const char * const BodyTypes[] = { "x-unknown", "audio", "application", "image", "message", "model", "multipart", "text", "video" };
-const char * const BodyEncodings[] = { "x-unknown", "7bit", "8bit", "quoted-printable", "base64", "binary", "x-uuencoded" };
+const char *const BodyTypes[] = {"x-unknown", "audio",   "application",
+                                 "image",     "message", "model",
+                                 "multipart", "text",    "video"};
+const char *const BodyEncodings[] = {"x-unknown",        "7bit",   "8bit",
+                                     "quoted-printable", "base64", "binary",
+                                     "x-uuencoded"};
 #else
-extern const char * const Weekdays[];
-extern const char * const Months[];
+extern const char *const Weekdays[];
+extern const char *const Months[];
 #endif
 
 #ifdef MAIN_C
-/* so that global vars get included */ 
-#include "mx.h"
-#include "mutt_regex.h"
+/* so that global vars get included */
 #include "buffy.h"
-#include "sort.h"
-#include "mutt_crypt.h"
 #include "git-ver.h"
+#include "mutt_crypt.h"
+#include "mutt_regex.h"
+#include "mx.h"
+#include "sort.h"
 #endif /* MAIN_C */

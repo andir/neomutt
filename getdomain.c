@@ -17,19 +17,19 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
-#include <string.h>
-#include <unistd.h>
 #include <netdb.h>
-#include <sys/types.h>
+#include <string.h>
 #include <sys/socket.h>
+#include <sys/types.h>
+#include <unistd.h>
 
 #include "mutt.h"
 
 
-int getdnsdomainname (char *d, size_t len)
+int getdnsdomainname(char *d, size_t len)
 {
   int ret = -1;
 
@@ -41,14 +41,14 @@ int getdnsdomainname (char *d, size_t len)
   char *p;
 
   *d = '\0';
-  memset(&hints, 0, sizeof (struct addrinfo));
-  hints.ai_flags = AI_CANONNAME;
+  memset(&hints, 0, sizeof(struct addrinfo));
+  hints.ai_flags  = AI_CANONNAME;
   hints.ai_family = AF_UNSPEC;
 
   /* A DNS name can actually be only 253 octets, string is 256 */
   if ((node_len = sysconf(_SC_HOST_NAME_MAX)) == -1)
     node_len = STRING;
-  node = safe_malloc(node_len + 1);
+  node       = safe_malloc(node_len + 1);
   if (gethostname(node, node_len))
     ret = -1;
   else if (getaddrinfo(node, NULL, &hints, &h))
@@ -61,13 +61,12 @@ int getdnsdomainname (char *d, size_t len)
     {
       strfcpy(d, ++p, len);
       ret = 0;
-      mutt_debug (1, "getdnsdomainname(): %s\n", d);
+      mutt_debug(1, "getdnsdomainname(): %s\n", d);
     }
     freeaddrinfo(h);
   }
-  FREE (&node);
+  FREE(&node);
 #endif
 
   return ret;
 }
-

@@ -20,7 +20,7 @@
 #define _GETTEXT_H 1
 
 #if HAVE_LIMITS_H || _LIBC
-# include <limits.h>
+#include <limits.h>
 #endif
 
 /* @@ end of prolog @@ */
@@ -39,9 +39,9 @@
    when cross-compiling.  */
 
 #if __STDC__
-# define UINT_MAX_32_BITS 4294967295U
+#define UINT_MAX_32_BITS 4294967295U
 #else
-# define UINT_MAX_32_BITS 0xFFFFFFFF
+#define UINT_MAX_32_BITS 0xFFFFFFFF
 #endif
 
 /* If UINT_MAX isn't defined, assume it's a 32-bit type.
@@ -50,23 +50,23 @@
    (that certainly have <limits.h>) have 64+-bit integral types.  */
 
 #ifndef UINT_MAX
-# define UINT_MAX UINT_MAX_32_BITS
+#define UINT_MAX UINT_MAX_32_BITS
 #endif
 
 #if UINT_MAX == UINT_MAX_32_BITS
 typedef unsigned nls_uint32;
 #else
-# if USHRT_MAX == UINT_MAX_32_BITS
+#if USHRT_MAX == UINT_MAX_32_BITS
 typedef unsigned short nls_uint32;
-# else
-#  if ULONG_MAX == UINT_MAX_32_BITS
+#else
+#if ULONG_MAX == UINT_MAX_32_BITS
 typedef unsigned long nls_uint32;
-#  else
-  /* The following line is intended to throw an error.  Using #error is
+#else
+/* The following line is intended to throw an error.  Using #error is
      not portable enough.  */
-  "Cannot determine unsigned 32-bit data type."
-#  endif
-# endif
+"Cannot determine unsigned 32-bit data type."
+#endif
+#endif
 #endif
 
 
@@ -99,4 +99,4 @@ struct string_desc
 
 /* @@ begin of epilog @@ */
 
-#endif	/* gettext.h  */
+#endif /* gettext.h  */

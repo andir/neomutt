@@ -21,12 +21,12 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include "mutt.h"
-#include "mbyte.h"
 #include "charset.h"
+#include "mbyte.h"
 
 #include <errno.h>
 
@@ -38,37 +38,38 @@
 
 int Charset_is_utf8 = 0;
 #ifndef HAVE_WC_FUNCS
-static int charset_is_ja = 0;
-static iconv_t charset_to_utf8 = (iconv_t)(-1);
+static int charset_is_ja         = 0;
+static iconv_t charset_to_utf8   = (iconv_t)(-1);
 static iconv_t charset_from_utf8 = (iconv_t)(-1);
 #endif
 
-void mutt_set_charset (char *charset)
+void mutt_set_charset(char *charset)
 {
   char buffer[STRING];
 
-  mutt_canonical_charset (buffer, sizeof (buffer), charset);
+  mutt_canonical_charset(buffer, sizeof(buffer), charset);
 
   Charset_is_utf8 = 0;
 #ifndef HAVE_WC_FUNCS
   charset_is_ja = 0;
   if (charset_to_utf8 != (iconv_t)(-1))
   {
-    iconv_close (charset_to_utf8);
+    iconv_close(charset_to_utf8);
     charset_to_utf8 = (iconv_t)(-1);
   }
   if (charset_from_utf8 != (iconv_t)(-1))
   {
-    iconv_close (charset_from_utf8);
+    iconv_close(charset_from_utf8);
     charset_from_utf8 = (iconv_t)(-1);
   }
 #endif
 
-  if (mutt_is_utf8 (buffer))
+  if (mutt_is_utf8(buffer))
     Charset_is_utf8 = 1;
 #ifndef HAVE_WC_FUNCS
-  else if (!ascii_strcasecmp(buffer, "euc-jp") || !ascii_strcasecmp(buffer, "shift_jis")
-  	|| !ascii_strcasecmp(buffer, "cp932") || !ascii_strcasecmp(buffer, "eucJP-ms"))
+  else if (!ascii_strcasecmp(buffer, "euc-jp") ||
+           !ascii_strcasecmp(buffer, "shift_jis") || !ascii_strcasecmp(buffer, "cp932") ||
+           !ascii_strcasecmp(buffer, "eucJP-ms"))
   {
     charset_is_ja = 1;
 
@@ -78,8 +79,8 @@ void mutt_set_charset (char *charset)
      * with a charset-hook. Or rather: If $charset was wrong, we would
      * want to try to correct... $charset directly.
      */
-    charset_to_utf8 = mutt_iconv_open ("utf-8", charset, 0);
-    charset_from_utf8 = mutt_iconv_open (charset, "utf-8", 0);
+    charset_to_utf8   = mutt_iconv_open("utf-8", charset, 0);
+    charset_from_utf8 = mutt_iconv_open(charset, "utf-8", 0);
   }
 #endif
 
@@ -102,42 +103,42 @@ void mutt_set_charset (char *charset)
  * Unfortunately, we can't handle non-stateless encodings.
  */
 
-static size_t wcrtomb_iconv (char *s, wchar_t wc, iconv_t cd)
+static size_t wcrtomb_iconv(char *s, wchar_t wc, iconv_t cd)
 {
-  char buf[MB_LEN_MAX+1];
+  char buf[MB_LEN_MAX + 1];
   ICONV_CONST char *ib;
   char *ob;
   size_t ibl, obl;
 
   if (s)
   {
-    ibl = mutt_wctoutf8 (buf, wc, sizeof (buf));
+    ibl = mutt_wctoutf8(buf, wc, sizeof(buf));
     if (ibl == (size_t)(-1))
       return (size_t)(-1);
-    ib = buf;
-    ob = s;
+    ib  = buf;
+    ob  = s;
     obl = MB_LEN_MAX;
-    iconv (cd, &ib, &ibl, &ob, &obl);
+    iconv(cd, &ib, &ibl, &ob, &obl);
   }
   else
   {
-    ib = "";
+    ib  = "";
     ibl = 1;
-    ob = buf;
-    obl = sizeof (buf);
-    iconv (cd, &ib, &ibl, &ob, &obl);
+    ob  = buf;
+    obl = sizeof(buf);
+    iconv(cd, &ib, &ibl, &ob, &obl);
   }
   return ob - s;
 }
 
-size_t wcrtomb (char *s, wchar_t wc, mbstate_t *ps)
+size_t wcrtomb(char *s, wchar_t wc, mbstate_t *ps)
 {
   /* We only handle stateless encodings, so we can ignore ps. */
 
   if (Charset_is_utf8)
-    return mutt_wctoutf8 (s, wc, MB_LEN_MAX);
+    return mutt_wctoutf8(s, wc, MB_LEN_MAX);
   else if (charset_from_utf8 != (iconv_t)(-1))
-    return wcrtomb_iconv (s, wc, charset_from_utf8);
+    return wcrtomb_iconv(s, wc, charset_from_utf8);
   else
   {
     if (!s)
@@ -152,8 +153,7 @@ size_t wcrtomb (char *s, wchar_t wc, mbstate_t *ps)
   }
 }
 
-size_t mbrtowc_iconv (wchar_t *pwc, const char *s, size_t n,
-		      mbstate_t *ps, iconv_t cd)
+size_t mbrtowc_iconv(wchar_t *pwc, const char *s, size_t n, mbstate_t *ps, iconv_t cd)
 {
   static mbstate_t mbstate;
   ICONV_CONST char *ib, *ibmax;
@@ -164,59 +164,59 @@ size_t mbrtowc_iconv (wchar_t *pwc, const char *s, size_t n,
   if (!n)
     return (size_t)(-2);
 
-  t = memchr (ps, 0, sizeof (*ps));
-  k = t ? (t - (char *)ps) : sizeof (*ps);
-  if (k > sizeof (bufi))
+  t = memchr(ps, 0, sizeof(*ps));
+  k = t ? (t - (char *) ps) : sizeof(*ps);
+  if (k > sizeof(bufi))
     k = 0;
   if (k)
   {
     /* use the buffer for input */
-    memcpy (bufi, ps, k);
-    ib = bufi;
-    ibmax = bufi + (k + n < sizeof (bufi) ? k + n : sizeof (bufi));
-    memcpy (bufi + k, s, ibmax - bufi - k);
+    memcpy(bufi, ps, k);
+    ib    = bufi;
+    ibmax = bufi + (k + n < sizeof(bufi) ? k + n : sizeof(bufi));
+    memcpy(bufi + k, s, ibmax - bufi - k);
   }
   else
   {
     /* use the real input */
-    ib = (ICONV_CONST char*) s;
-    ibmax = (ICONV_CONST char*) s + n;
+    ib    = (ICONV_CONST char *) s;
+    ibmax = (ICONV_CONST char *) s + n;
   }
 
-  ob = bufo;
-  obl = sizeof (bufo);
+  ob  = bufo;
+  obl = sizeof(bufo);
   ibl = 1;
 
   for (;;)
   {
-    r = iconv (cd, &ib, &ibl, &ob, &obl);
+    r = iconv(cd, &ib, &ibl, &ob, &obl);
     if (ob > bufo && (!k || ib > bufi + k))
     {
       /* we have a character */
-      memset (ps, 0, sizeof (*ps));
-      utf8rtowc (pwc, bufo, ob - bufo, &mbstate);
+      memset(ps, 0, sizeof(*ps));
+      utf8rtowc(pwc, bufo, ob - bufo, &mbstate);
       return (pwc && *pwc) ? (ib - (k ? bufi + k : s)) : 0;
     }
     else if (!r || (r == (size_t)(-1) && errno == EINVAL))
     {
       if (ib + ibl < ibmax)
-	/* try using more input */
-	++ibl;
+        /* try using more input */
+        ++ibl;
       else if (k && ib > bufi + k && bufi + k + n > ibmax)
       {
-	/* switch to using real input */
-	ib = (ICONV_CONST char*) s + (ib - bufi - k);
-	ibmax = (ICONV_CONST char*) s + n;
-	k = 0;
-	++ibl;
+        /* switch to using real input */
+        ib    = (ICONV_CONST char *) s + (ib - bufi - k);
+        ibmax = (ICONV_CONST char *) s + n;
+        k     = 0;
+        ++ibl;
       }
       else
       {
-	/* save the state and give up */
-	memset (ps, 0, sizeof (*ps));
-	if (ibl <= sizeof (mbstate_t)) /* need extra condition here! */
-	  memcpy (ps, ib, ibl);
-	return (size_t)(-2);
+        /* save the state and give up */
+        memset(ps, 0, sizeof(*ps));
+        if (ibl <= sizeof(mbstate_t)) /* need extra condition here! */
+          memcpy(ps, ib, ibl);
+        return (size_t)(-2);
       }
     }
     else
@@ -228,7 +228,7 @@ size_t mbrtowc_iconv (wchar_t *pwc, const char *s, size_t n,
   }
 }
 
-size_t mbrtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *ps)
+size_t mbrtowc(wchar_t *pwc, const char *s, size_t n, mbstate_t *ps)
 {
   static mbstate_t mbstate;
 
@@ -236,9 +236,9 @@ size_t mbrtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *ps)
     ps = &mbstate;
 
   if (Charset_is_utf8)
-    return utf8rtowc (pwc, s, n, ps);
+    return utf8rtowc(pwc, s, n, ps);
   else if (charset_to_utf8 != (iconv_t)(-1))
-    return mbrtowc_iconv (pwc, s, n, ps, charset_to_utf8);
+    return mbrtowc_iconv(pwc, s, n, ps, charset_to_utf8);
   else
   {
     if (!s)
@@ -247,30 +247,30 @@ size_t mbrtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *ps)
       return 0;
     }
     if (!n)
-      return (size_t)-2;
+      return (size_t) -2;
     if (pwc)
-      *pwc = (wchar_t)(unsigned char)*s;
+      *pwc = (wchar_t)(unsigned char) *s;
     return (*s != 0);
   }
 }
 
-int iswprint (wint_t wc)
+int iswprint(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
     return ((0x20 <= wc && wc < 0x7f) || 0xa0 <= wc);
   else
-    return (0 <= wc && wc < 256) ? IsPrint (wc) : 0;
+    return (0 <= wc && wc < 256) ? IsPrint(wc) : 0;
 }
 
-int iswspace (wint_t wc)
+int iswspace(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
     return (9 <= wc && wc <= 13) || wc == 32;
   else
-    return (0 <= wc && wc < 256) ? isspace (wc) : 0;
+    return (0 <= wc && wc < 256) ? isspace(wc) : 0;
 }
 
-static wint_t towupper_ucs (wint_t x)
+static wint_t towupper_ucs(wint_t x)
 {
   /* Only works for x < 0x130 */
   if ((0x60 < x && x < 0x7b) || (0xe0 <= x && x < 0xff && x != 0xf7))
@@ -285,7 +285,7 @@ static wint_t towupper_ucs (wint_t x)
     return x;
 }
 
-static int iswupper_ucs (wint_t x)
+static int iswupper_ucs(wint_t x)
 {
   /* Only works for x < 0x130 */
   if ((0x60 < x && x < 0x7b) || (0xe0 <= x && x < 0xff && x != 0xf7))
@@ -302,7 +302,7 @@ static int iswupper_ucs (wint_t x)
     return 0;
 }
 
-static wint_t towlower_ucs (wint_t x)
+static wint_t towlower_ucs(wint_t x)
 {
   /* Only works for x < 0x130 */
   if ((0x40 < x && x < 0x5b) || (0xc0 <= x && x < 0xdf && x != 0xd7))
@@ -313,7 +313,7 @@ static wint_t towlower_ucs (wint_t x)
     return x;
 }
 
-static int iswalnum_ucs (wint_t wc)
+static int iswalnum_ucs(wint_t wc)
 {
   /* Only works for x < 0x220 */
   if (wc >= 0x100)
@@ -330,7 +330,7 @@ static int iswalnum_ucs (wint_t wc)
     return !(wc == 0xd7 || wc == 0xf7);
 }
 
-static int iswalpha_ucs (wint_t wc)
+static int iswalpha_ucs(wint_t wc)
 {
   /* Only works for x < 0x220 */
   if (wc >= 0x100)
@@ -345,44 +345,44 @@ static int iswalpha_ucs (wint_t wc)
     return !(wc == 0xd7 || wc == 0xf7);
 }
 
-wint_t towupper (wint_t wc)
+wint_t towupper(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
-    return towupper_ucs (wc);
+    return towupper_ucs(wc);
   else
-    return (0 <= wc && wc < 256) ? toupper (wc) : wc;
+    return (0 <= wc && wc < 256) ? toupper(wc) : wc;
 }
 
-wint_t towlower (wint_t wc)
+wint_t towlower(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
-    return towlower_ucs (wc);
+    return towlower_ucs(wc);
   else
-    return (0 <= wc && wc < 256) ? tolower (wc) : wc;
+    return (0 <= wc && wc < 256) ? tolower(wc) : wc;
 }
 
-int iswalnum (wint_t wc)
+int iswalnum(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
-    return iswalnum_ucs (wc);
+    return iswalnum_ucs(wc);
   else
-    return (0 <= wc && wc < 256) ? isalnum (wc) : 0;
+    return (0 <= wc && wc < 256) ? isalnum(wc) : 0;
 }
 
-int iswalpha (wint_t wc)
+int iswalpha(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
-    return iswalpha_ucs (wc);
+    return iswalpha_ucs(wc);
   else
-    return (0 <= wc && wc < 256) ? isalpha (wc) : 0;
+    return (0 <= wc && wc < 256) ? isalpha(wc) : 0;
 }
 
-int iswupper (wint_t wc)
+int iswupper(wint_t wc)
 {
   if (Charset_is_utf8 || charset_is_ja)
-    return iswupper_ucs (wc);
+    return iswupper_ucs(wc);
   else
-    return (0 <= wc && wc < 256) ? isupper (wc) : 0;
+    return (0 <= wc && wc < 256) ? isupper(wc) : 0;
 }
 
 /*
@@ -390,7 +390,7 @@ int iswupper (wint_t wc)
  *   Symbols, Greek and Cyrillic in JIS X 0208, Japanese Kanji
  *   Character Set, have a column width of 2.
  */
-int wcwidth_ja (wchar_t ucs)
+int wcwidth_ja(wchar_t ucs)
 {
   if (ucs >= 0x3021)
     return -1; /* continue with the normal check */
@@ -406,7 +406,7 @@ int wcwidth_ja (wchar_t ucs)
 
 int wcwidth_ucs(wchar_t ucs);
 
-int wcwidth (wchar_t wc)
+int wcwidth(wchar_t wc)
 {
   if (!Charset_is_utf8)
   {
@@ -414,28 +414,28 @@ int wcwidth (wchar_t wc)
     {
       /* 8-bit case */
       if (!wc)
-	return 0;
-      else if ((0 <= wc && wc < 256) && IsPrint (wc))
-	return 1;
+        return 0;
+      else if ((0 <= wc && wc < 256) && IsPrint(wc))
+        return 1;
       else
-	return -1;
+        return -1;
     }
     else
     {
       /* Japanese */
-      int k = wcwidth_ja (wc);
+      int k = wcwidth_ja(wc);
       if (k != -1)
-	return k;
+        return k;
     }
   }
-  return wcwidth_ucs (wc);
+  return wcwidth_ucs(wc);
 }
 
-size_t utf8rtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *_ps)
+size_t utf8rtowc(wchar_t *pwc, const char *s, size_t n, mbstate_t *_ps)
 {
   static wchar_t mbstate;
-  wchar_t *ps = (wchar_t *)_ps;
-  size_t k = 1;
+  wchar_t *ps = (wchar_t *) _ps;
+  size_t k    = 1;
   unsigned char c;
   wchar_t wc;
   int count;
@@ -449,21 +449,21 @@ size_t utf8rtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *_ps)
     return 0;
   }
   if (!n)
-    return (size_t)-2;
+    return (size_t) -2;
 
   if (!*ps)
   {
-    c = (unsigned char)*s;
+    c = (unsigned char) *s;
     if (c < 0x80)
     {
       if (pwc)
-	*pwc = c;
+        *pwc = c;
       return (c != 0);
     }
     else if (c < 0xc2)
     {
       errno = EILSEQ;
-      return (size_t)-1;
+      return (size_t) -1;
     }
     else if (c < 0xe0)
       wc = ((c & 0x1f) << 6) + (count = 0);
@@ -478,67 +478,66 @@ size_t utf8rtowc (wchar_t *pwc, const char *s, size_t n, mbstate_t *_ps)
     else
     {
       errno = EILSEQ;
-      return (size_t)-1;
+      return (size_t) -1;
     }
     ++s, --n, ++k;
   }
   else
   {
-    wc = *ps & 0x7fffffff;
+    wc    = *ps & 0x7fffffff;
     count = wc & 7; /* if count > 4 it will be caught below */
   }
 
   for (; n; ++s, --n, ++k)
   {
-    c = (unsigned char)*s;
+    c = (unsigned char) *s;
     if (0x80 <= c && c < 0xc0)
     {
       wc |= (c & 0x3f) << (6 * count);
       if (!count)
       {
-	if (pwc)
-	  *pwc = wc;
-	*ps = 0;
-	return wc ? k : 0;
+        if (pwc)
+          *pwc = wc;
+        *ps    = 0;
+        return wc ? k : 0;
       }
       --count, --wc;
-      if (!(wc >> (11+count*5)))
+      if (!(wc >> (11 + count * 5)))
       {
-	errno = count < 4 ? EILSEQ : EINVAL;
-	return (size_t)-1;
+        errno = count < 4 ? EILSEQ : EINVAL;
+        return (size_t) -1;
       }
     }
     else
     {
       errno = EILSEQ;
-      return (size_t)-1;
+      return (size_t) -1;
     }
   }
   *ps = wc;
-  return (size_t)-2;
+  return (size_t) -2;
 }
 
 #endif /* !HAVE_WC_FUNCS */
 
-wchar_t replacement_char (void)
+wchar_t replacement_char(void)
 {
   return Charset_is_utf8 ? 0xfffd : '?';
 }
 
-int is_display_corrupting_utf8 (wchar_t wc)
+int is_display_corrupting_utf8(wchar_t wc)
 {
-  if (wc == (wchar_t)0x200f ||   /* bidi markers: #3827 */
-      wc == (wchar_t)0x200e ||
-      wc == (wchar_t)0x00ad ||   /* soft hyphen: #3848 */
-      wc == (wchar_t)0xfeff ||   /* zero width no-break space */
-      (wc >= (wchar_t)0x202a &&  /* misc directional markers: #3854 */
-       wc <= (wchar_t)0x202e))
+  if (wc == (wchar_t) 0x200f || /* bidi markers: #3827 */
+      wc == (wchar_t) 0x200e || wc == (wchar_t) 0x00ad || /* soft hyphen: #3848 */
+      wc == (wchar_t) 0xfeff ||  /* zero width no-break space */
+      (wc >= (wchar_t) 0x202a && /* misc directional markers: #3854 */
+       wc <= (wchar_t) 0x202e))
     return 1;
   else
     return 0;
 }
 
-int mutt_filter_unprintable (char **s)
+int mutt_filter_unprintable(char **s)
 {
   BUFFER *b = NULL;
   wchar_t wc;
@@ -547,30 +546,28 @@ int mutt_filter_unprintable (char **s)
   char *p = *s;
   mbstate_t mbstate1, mbstate2;
 
-  if (!(b = mutt_buffer_new ()))
+  if (!(b = mutt_buffer_new()))
     return -1;
-  memset (&mbstate1, 0, sizeof (mbstate1));
-  memset (&mbstate2, 0, sizeof (mbstate2));
-  for (; (k = mbrtowc (&wc, p, MB_LEN_MAX, &mbstate1)); p += k)
+  memset(&mbstate1, 0, sizeof(mbstate1));
+  memset(&mbstate2, 0, sizeof(mbstate2));
+  for (; (k = mbrtowc(&wc, p, MB_LEN_MAX, &mbstate1)); p += k)
   {
     if (k == (size_t)(-1) || k == (size_t)(-2))
     {
       k = 1;
-      memset (&mbstate1, 0, sizeof (mbstate1));
+      memset(&mbstate1, 0, sizeof(mbstate1));
       wc = replacement_char();
     }
-    if (!IsWPrint (wc))
+    if (!IsWPrint(wc))
       wc = '?';
-    else if (Charset_is_utf8 &&
-             is_display_corrupting_utf8 (wc))
+    else if (Charset_is_utf8 && is_display_corrupting_utf8(wc))
       continue;
-    k2 = wcrtomb (scratch, wc, &mbstate2);
+    k2          = wcrtomb(scratch, wc, &mbstate2);
     scratch[k2] = '\0';
-    mutt_buffer_addstr (b, scratch);
+    mutt_buffer_addstr(b, scratch);
   }
-  FREE (s);  /* __FREE_CHECKED__ */
-  *s = b->data ? b->data : safe_calloc (1, 1);
-  FREE (&b);
+  FREE(s); /* __FREE_CHECKED__ */
+  *s = b->data ? b->data : safe_calloc(1, 1);
+  FREE(&b);
   return 0;
 }
-

@@ -17,7 +17,7 @@
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
  *
- */ 
+ */
 
 /* This file was originally part of mutt-ng */
 
@@ -27,9 +27,9 @@
 #include "mutt.h"
 
 /* body handler implementing RfC 3676 for format=flowed */
-int rfc3676_handler (BODY *a, STATE *s);
+int rfc3676_handler(BODY *a, STATE *s);
 
 /* this does the space-stuffing for RfC3676 style messages */
-void rfc3676_space_stuff (HEADER *hdr);
+void rfc3676_space_stuff(HEADER *hdr);
 
 #endif /* !_MUTT_RFC3676_H */

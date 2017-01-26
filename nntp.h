@@ -21,17 +21,17 @@
 #ifndef _NNTP_H_
 #define _NNTP_H_ 1
 
-#include "mutt_socket.h"
-#include "mailbox.h"
 #include "bcache.h"
+#include "mailbox.h"
+#include "mutt_socket.h"
 
 #if USE_HCACHE
 #include "hcache.h"
 #endif
 
-#include <time.h>
-#include <sys/types.h>
 #include <stdint.h>
+#include <sys/types.h>
+#include <time.h>
 
 #define NNTP_PORT 119
 #define NNTP_SSL_PORT 563
@@ -118,51 +118,50 @@ typedef struct
   unsigned int parsed : 1;
 } NNTP_HEADER_DATA;
 
-#define NHDR(hdr) ((NNTP_HEADER_DATA*)((hdr)->data))
+#define NHDR(hdr) ((NNTP_HEADER_DATA *) ((hdr)->data))
 
 /* internal functions */
-int nntp_add_group (char *, void *);
-int nntp_active_save_cache (NNTP_SERVER *);
-int nntp_check_new_groups (NNTP_SERVER *);
-int nntp_fastclose_mailbox (CONTEXT *);
-int nntp_open_connection (NNTP_SERVER *);
-void nntp_newsrc_gen_entries (CONTEXT *);
-void nntp_bcache_update (NNTP_DATA *);
-void nntp_article_status (CONTEXT *, HEADER *, char *, anum_t);
-void nntp_group_unread_stat (NNTP_DATA *);
-void nntp_data_free (void *);
-void nntp_acache_free (NNTP_DATA *);
-void nntp_delete_group_cache (NNTP_DATA *);
+int nntp_add_group(char *, void *);
+int nntp_active_save_cache(NNTP_SERVER *);
+int nntp_check_new_groups(NNTP_SERVER *);
+int nntp_fastclose_mailbox(CONTEXT *);
+int nntp_open_connection(NNTP_SERVER *);
+void nntp_newsrc_gen_entries(CONTEXT *);
+void nntp_bcache_update(NNTP_DATA *);
+void nntp_article_status(CONTEXT *, HEADER *, char *, anum_t);
+void nntp_group_unread_stat(NNTP_DATA *);
+void nntp_data_free(void *);
+void nntp_acache_free(NNTP_DATA *);
+void nntp_delete_group_cache(NNTP_DATA *);
 
 /* exposed interface */
-NNTP_SERVER *nntp_select_server (char *, int);
-NNTP_DATA *mutt_newsgroup_subscribe (NNTP_SERVER *, char *);
-NNTP_DATA *mutt_newsgroup_unsubscribe (NNTP_SERVER *, char *);
-NNTP_DATA *mutt_newsgroup_catchup (NNTP_SERVER *, char *);
-NNTP_DATA *mutt_newsgroup_uncatchup (NNTP_SERVER *, char *);
-int nntp_active_fetch (NNTP_SERVER *);
-int nntp_newsrc_update (NNTP_SERVER *);
-int nntp_open_mailbox (CONTEXT *);
-int nntp_sync_mailbox (CONTEXT *ctx, int *index_hint);
-int nntp_check_mailbox (CONTEXT *, int*);
-int nntp_fetch_message (CONTEXT *, MESSAGE *, int);
-int nntp_post (const char *);
-int nntp_check_msgid (CONTEXT *, const char *);
-int nntp_check_children (CONTEXT *, const char *);
-int nntp_newsrc_parse (NNTP_SERVER *);
-void nntp_newsrc_close (NNTP_SERVER *);
-void nntp_buffy (char *, size_t);
-void nntp_expand_path (char *, size_t, ACCOUNT *);
-void nntp_clear_cache (NNTP_SERVER *);
-const char *nntp_format_str (char *, size_t, size_t, int, char, const char *,
-			     const char *, const char *, const char *,
-			     unsigned long, format_flag);
+NNTP_SERVER *nntp_select_server(char *, int);
+NNTP_DATA *mutt_newsgroup_subscribe(NNTP_SERVER *, char *);
+NNTP_DATA *mutt_newsgroup_unsubscribe(NNTP_SERVER *, char *);
+NNTP_DATA *mutt_newsgroup_catchup(NNTP_SERVER *, char *);
+NNTP_DATA *mutt_newsgroup_uncatchup(NNTP_SERVER *, char *);
+int nntp_active_fetch(NNTP_SERVER *);
+int nntp_newsrc_update(NNTP_SERVER *);
+int nntp_open_mailbox(CONTEXT *);
+int nntp_sync_mailbox(CONTEXT *ctx, int *index_hint);
+int nntp_check_mailbox(CONTEXT *, int *);
+int nntp_fetch_message(CONTEXT *, MESSAGE *, int);
+int nntp_post(const char *);
+int nntp_check_msgid(CONTEXT *, const char *);
+int nntp_check_children(CONTEXT *, const char *);
+int nntp_newsrc_parse(NNTP_SERVER *);
+void nntp_newsrc_close(NNTP_SERVER *);
+void nntp_buffy(char *, size_t);
+void nntp_expand_path(char *, size_t, ACCOUNT *);
+void nntp_clear_cache(NNTP_SERVER *);
+const char *nntp_format_str(char *, size_t, size_t, int, char, const char *, const char *,
+                            const char *, const char *, unsigned long, format_flag);
 
-NNTP_SERVER *CurrentNewsSrv INITVAL (NULL);
+NNTP_SERVER *CurrentNewsSrv INITVAL(NULL);
 
 #ifdef USE_HCACHE
-header_cache_t *nntp_hcache_open (NNTP_DATA *);
-void nntp_hcache_update (NNTP_DATA *, header_cache_t *);
+header_cache_t *nntp_hcache_open(NNTP_DATA *);
+void nntp_hcache_update(NNTP_DATA *, header_cache_t *);
 #endif
 
 extern struct mx_ops mx_nntp_ops;

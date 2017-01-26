@@ -17,21 +17,21 @@
    USA.  */
 
 #ifdef HAVE_CONFIG_H
-# include <config.h>
+#include <config.h>
 #endif
 
 #ifdef _LIBC
-# define __need_NULL
-# include <stddef.h>
+#define __need_NULL
+#include <stddef.h>
 #else
-# include <stdlib.h>		/* Just for NULL.  */
+#include <stdlib.h> /* Just for NULL.  */
 #endif
 
 #include "gettextP.h"
 #ifdef _LIBC
-# include <libintl.h>
+#include <libintl.h>
 #else
-# include "libgnuintl.h"
+#include "libgnuintl.h"
 #endif
 
 /* @@ end of prolog @@ */
@@ -41,24 +41,22 @@
    code is also used in GNU C Library where the names have a __
    prefix.  So we have to make a difference here.  */
 #ifdef _LIBC
-# define GETTEXT __gettext
-# define DCGETTEXT __dcgettext
+#define GETTEXT __gettext
+#define DCGETTEXT __dcgettext
 #else
-# define GETTEXT gettext__
-# define DCGETTEXT dcgettext__
+#define GETTEXT gettext__
+#define DCGETTEXT dcgettext__
 #endif
 
 /* Look up MSGID in the current default message catalog for the current
    LC_MESSAGES locale.  If not found, returns MSGID itself (the default
    text).  */
-char *
-GETTEXT (msgid)
-     const char *msgid;
+char *GETTEXT(msgid) const char *msgid;
 {
-  return DCGETTEXT (NULL, msgid, LC_MESSAGES);
+  return DCGETTEXT(NULL, msgid, LC_MESSAGES);
 }
 
 #ifdef _LIBC
 /* Alias for function name in GNU C Library.  */
-weak_alias (__gettext, gettext);
+weak_alias(__gettext, gettext);
 #endif

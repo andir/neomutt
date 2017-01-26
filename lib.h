@@ -18,47 +18,47 @@
  *     License along with this program; if not, write to the Free
  *     Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
  *     Boston, MA  02110-1301, USA.
- */ 
+ */
 
 /* mutt functions which are generally useful. */
 
 #ifndef _LIB_H
-# define _LIB_H
+#define _LIB_H
 
-# include <stdio.h>
-# include <string.h>
-# ifdef HAVE_UNISTD_H
-#  include <unistd.h> /* needed for SEEK_SET */
-# endif
-# include <sys/types.h>
-# include <sys/stat.h>
-# include <time.h>
-# include <limits.h>
-# include <stdarg.h>
-# include <stdbool.h>
-# include <signal.h>
+#include <stdio.h>
+#include <string.h>
+#ifdef HAVE_UNISTD_H
+#include <unistd.h> /* needed for SEEK_SET */
+#endif
+#include <limits.h>
+#include <signal.h>
+#include <stdarg.h>
+#include <stdbool.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <time.h>
 
-# ifndef _POSIX_PATH_MAX
-#  include <limits.h>
-# endif
+#ifndef _POSIX_PATH_MAX
+#include <limits.h>
+#endif
 
-# ifdef ENABLE_NLS
-#  include <libintl.h>
-# define _(a) gettext (a)
-#  ifdef gettext_noop
-#   define N_(a) gettext_noop (a)
-#  else
-#   define N_(a) (a)
-#  endif
-# else
-#  define _(a) (a)
-#  define N_(a) a
-# endif
+#ifdef ENABLE_NLS
+#include <libintl.h>
+#define _(a) gettext(a)
+#ifdef gettext_noop
+#define N_(a) gettext_noop(a)
+#else
+#define N_(a) (a)
+#endif
+#else
+#define _(a) (a)
+#define N_(a) a
+#endif
 
-# define HUGE_STRING     8192
-# define LONG_STRING     1024
-# define STRING          256
-# define SHORT_STRING    128
+#define HUGE_STRING 8192
+#define LONG_STRING 1024
+#define STRING 256
+#define SHORT_STRING 128
 
 /*
  * Create a format string to be used with scanf.
@@ -66,38 +66,40 @@
  * 
  * See K&R 2nd ed, p. 231 for an explanation.
  */
-# define _MUTT_FORMAT_2(a,b)	"%" a  b
-# define _MUTT_FORMAT_1(a, b)	_MUTT_FORMAT_2(#a, b)
-# define MUTT_FORMAT(a)		_MUTT_FORMAT_1(a, "s")
-# define MUTT_FORMAT2(a,b)	_MUTT_FORMAT_1(a, b)
+#define _MUTT_FORMAT_2(a, b) "%" a b
+#define _MUTT_FORMAT_1(a, b) _MUTT_FORMAT_2(#a, b)
+#define MUTT_FORMAT(a) _MUTT_FORMAT_1(a, "s")
+#define MUTT_FORMAT2(a, b) _MUTT_FORMAT_1(a, b)
 
 
-# define FREE(x) safe_free(x)
-# define NONULL(x) x?x:""
-# define ISSPACE(c) isspace((unsigned char)c)
+#define FREE(x) safe_free(x)
+#define NONULL(x) x ? x : ""
+#define ISSPACE(c) isspace((unsigned char) c)
 
-# undef MAX
-# undef MIN
-# define MAX(a,b) ((a) < (b) ? (b) : (a))
-# define MIN(a,b) ((a) < (b) ? (a) : (b))
+#undef MAX
+#undef MIN
+#define MAX(a, b) ((a) < (b) ? (b) : (a))
+#define MIN(a, b) ((a) < (b) ? (a) : (b))
 
 /* Use this with care.  If the compiler can't see the array
  * definition, it obviously won't produce a correct result. */
-#define mutt_array_size(x)  (sizeof (x) / sizeof ((x)[0]))
+#define mutt_array_size(x) (sizeof(x) / sizeof((x)[0]))
 
 /* For mutt_format_string() justifications */
 /* Making left 0 and center -1 is of course completely nonsensical, but
  * it retains compatibility for any patches that call mutt_format_string.
  * Once patches are updated to use FMT_*, these can be made sane. */
-#define FMT_LEFT	0
-#define FMT_RIGHT	1
-#define FMT_CENTER	-1
+#define FMT_LEFT 0
+#define FMT_RIGHT 1
+#define FMT_CENTER -1
 
 #define FOREVER while (1)
 
 /* this macro must check for *c == 0 since isspace(0) has unreliable behavior
    on some systems */
-# define SKIPWS(c) while (*(c) && isspace ((unsigned char) *(c))) c++;
+#define SKIPWS(c)                                                              \
+  while (*(c) && isspace((unsigned char) *(c)))                                \
+    c++;
 
 #define EMAIL_WSP " \t\r\n"
 
@@ -107,8 +109,8 @@
 static inline char *skip_email_wsp(const char *s)
 {
   if (s)
-    return (char *)(s + strspn(s, EMAIL_WSP));
-  return (char *)s;
+    return (char *) (s + strspn(s, EMAIL_WSP));
+  return (char *) s;
 }
 
 static inline int is_email_wsp(char c)
@@ -125,19 +127,22 @@ static inline int is_email_wsp(char c)
  */
 
 
-# ifndef _EXTLIB_C
-extern void (*mutt_error) (const char *, ...);
-# endif
+#ifndef _EXTLIB_C
+extern void (*mutt_error)(const char *, ...);
+#endif
 
-void mutt_exit (int);
+void mutt_exit(int);
 
 
 #ifdef DEBUG
 extern FILE *debugfile;
 extern int debuglevel;
-void mutt_debug (int level, const char *, ...);
+void mutt_debug(int level, const char *, ...);
 #else
-#define mutt_debug(...) do { } while (0)
+#define mutt_debug(...)                                                        \
+  do                                                                           \
+  {                                                                            \
+  } while (0)
 #endif
 
 
@@ -146,25 +151,25 @@ void mutt_debug (int level, const char *, ...);
 #define S_BKG 126
 
 /* Flags for mutt_read_line() */
-#define MUTT_CONT		(1<<0)		/* \-continuation */
-#define MUTT_EOL		(1<<1)		/* don't strip \n/\r\n */
+#define MUTT_CONT (1 << 0) /* \-continuation */
+#define MUTT_EOL (1 << 1)  /* don't strip \n/\r\n */
 
 /* The actual library functions. */
 
-FILE *safe_fopen (const char *, const char *);
+FILE *safe_fopen(const char *, const char *);
 
-char *mutt_concatn_path (char *, size_t, const char *, size_t, const char *, size_t);
-char *mutt_concat_path (char *, const char *, const char *, size_t);
-char *mutt_read_line (char *, size_t *, FILE *, int *, int);
-char *mutt_skip_whitespace (char *);
-char *mutt_strlower (char *);
-const char *mutt_strchrnul (const char *, char);
-char *mutt_substrcpy (char *, const char *, const char *, size_t);
-char *mutt_substrdup (const char *, const char *);
-char *safe_strcat (char *, size_t, const char *);
-char *safe_strncat (char *, size_t, const char *, size_t);
-char *safe_strdup (const char *);
-char *strfcpy (char *dest, const char *src, size_t dlen);
+char *mutt_concatn_path(char *, size_t, const char *, size_t, const char *, size_t);
+char *mutt_concat_path(char *, const char *, const char *, size_t);
+char *mutt_read_line(char *, size_t *, FILE *, int *, int);
+char *mutt_skip_whitespace(char *);
+char *mutt_strlower(char *);
+const char *mutt_strchrnul(const char *, char);
+char *mutt_substrcpy(char *, const char *, const char *, size_t);
+char *mutt_substrdup(const char *, const char *);
+char *safe_strcat(char *, size_t, const char *);
+char *safe_strncat(char *, size_t, const char *, size_t);
+char *safe_strdup(const char *);
+char *strfcpy(char *dest, const char *src, size_t dlen);
 
 /* strtol() wrappers with range checking; they return
  * 	 0 success
@@ -172,45 +177,45 @@ char *strfcpy (char *dest, const char *src, size_t dlen);
  * 	-2 overflow (for int and short)
  * the int pointer may be NULL to test only without conversion
  */
-int mutt_atos (const char *, short *);
-int mutt_atoi (const char *, int *);
-int mutt_atol (const char *, long *);
+int mutt_atos(const char *, short *);
+int mutt_atoi(const char *, int *);
+int mutt_atol(const char *, long *);
 
-const char *mutt_stristr (const char *, const char *);
-const char *mutt_basename (const char *);
+const char *mutt_stristr(const char *, const char *);
+const char *mutt_basename(const char *);
 
-int compare_stat (struct stat *, struct stat *);
-int mutt_copy_stream (FILE *, FILE *);
-int mutt_copy_bytes (FILE *, FILE *, size_t);
-int mutt_rx_sanitize_string (char *, size_t, const char *);
-int mutt_strcasecmp (const char *, const char *);
-int mutt_strcmp (const char *, const char *);
-int mutt_strncasecmp (const char *, const char *, size_t);
-int mutt_strncmp (const char *, const char *, size_t);
-int mutt_strcoll (const char *, const char *);
-int safe_asprintf (char **, const char *, ...);
-int safe_open (const char *, int);
-int safe_rename (const char *, const char *);
-int safe_symlink (const char *, const char *);
-int safe_fclose (FILE **);
-int safe_fsync_close (FILE **);
-int mutt_rmtree (const char *);
+int compare_stat(struct stat *, struct stat *);
+int mutt_copy_stream(FILE *, FILE *);
+int mutt_copy_bytes(FILE *, FILE *, size_t);
+int mutt_rx_sanitize_string(char *, size_t, const char *);
+int mutt_strcasecmp(const char *, const char *);
+int mutt_strcmp(const char *, const char *);
+int mutt_strncasecmp(const char *, const char *, size_t);
+int mutt_strncmp(const char *, const char *, size_t);
+int mutt_strcoll(const char *, const char *);
+int safe_asprintf(char **, const char *, ...);
+int safe_open(const char *, int);
+int safe_rename(const char *, const char *);
+int safe_symlink(const char *, const char *);
+int safe_fclose(FILE **);
+int safe_fsync_close(FILE **);
+int mutt_rmtree(const char *);
 int mutt_mkdir(const char *path, mode_t mode);
 
-size_t mutt_quote_filename (char *, size_t, const char *);
-size_t mutt_strlen (const char *);
+size_t mutt_quote_filename(char *, size_t, const char *);
+size_t mutt_strlen(const char *);
 
-void *safe_calloc (size_t, size_t);
-void *safe_malloc (size_t);
-void mutt_nocurses_error (const char *, ...);
-void mutt_remove_trailing_ws (char *);
-void mutt_sanitize_filename (char *, short);
-void mutt_str_replace (char **p, const char *s);
-void mutt_str_adjust (char **p);
-void mutt_unlink (const char *);
-void safe_free (void *);
-void safe_realloc (void *, size_t);
-int  mutt_inbox_cmp (const char *a, const char *b);
+void *safe_calloc(size_t, size_t);
+void *safe_malloc(size_t);
+void mutt_nocurses_error(const char *, ...);
+void mutt_remove_trailing_ws(char *);
+void mutt_sanitize_filename(char *, short);
+void mutt_str_replace(char **p, const char *s);
+void mutt_str_adjust(char **p);
+void mutt_unlink(const char *);
+void safe_free(void *);
+void safe_realloc(void *, size_t);
+int mutt_inbox_cmp(const char *a, const char *b);
 
 const char *mutt_strsysexit(int e);
 #endif

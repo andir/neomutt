@@ -17,7 +17,7 @@
    USA.  */
 
 #ifndef _LIBINTL_H
-#define _LIBINTL_H	1
+#define _LIBINTL_H 1
 
 #include <locale.h>
 
@@ -28,7 +28,7 @@
    this file!) and then only defines LC_MESSAGES.  To avoid a redefinition
    warning, don't define LC_MESSAGES in this case.  */
 #if !defined LC_MESSAGES && !defined __LOCALE_H
-# define LC_MESSAGES 1729
+#define LC_MESSAGES 1729
 #endif
 
 /* We define an additional symbol to signal that we use the GNU
@@ -38,16 +38,16 @@
 /* Resolve a platform specific conflict on DJGPP.  GNU gettext takes
    precedence over _conio_gettext.  */
 #ifdef __DJGPP__
-# undef gettext
-# define gettext gettext
+#undef gettext
+#define gettext gettext
 #endif
 
 #ifndef PARAMS
-# if __STDC__ || defined __cplusplus
-#  define PARAMS(args) args
-# else
-#  define PARAMS(args) ()
-# endif
+#if __STDC__ || defined __cplusplus
+#define PARAMS(args) args
+#else
+#define PARAMS(args) ()
+#endif
 #endif
 
 #ifdef __cplusplus
@@ -57,66 +57,59 @@ extern "C" {
 /* Look up MSGID in the current default message catalog for the current
    LC_MESSAGES locale.  If not found, returns MSGID itself (the default
    text).  */
-extern char *gettext PARAMS ((const char *__msgid));
+extern char *gettext PARAMS((const char *__msgid));
 
 /* Look up MSGID in the DOMAINNAME message catalog for the current
    LC_MESSAGES locale.  */
-extern char *dgettext PARAMS ((const char *__domainname, const char *__msgid));
+extern char *dgettext PARAMS((const char *__domainname, const char *__msgid));
 
 /* Look up MSGID in the DOMAINNAME message catalog for the current CATEGORY
    locale.  */
-extern char *dcgettext PARAMS ((const char *__domainname, const char *__msgid,
-				int __category));
+extern char *dcgettext PARAMS((const char *__domainname, const char *__msgid, int __category));
 
 
 /* Similar to `gettext' but select the plural form corresponding to the
    number N.  */
-extern char *ngettext PARAMS ((const char *__msgid1, const char *__msgid2,
-			       unsigned long int __n));
+extern char *ngettext PARAMS((const char *__msgid1, const char *__msgid2,
+                              unsigned long int __n));
 
 /* Similar to `dgettext' but select the plural form corresponding to the
    number N.  */
-extern char *dngettext PARAMS ((const char *__domainname, const char *__msgid1,
-				const char *__msgid2, unsigned long int __n));
+extern char *dngettext PARAMS((const char *__domainname, const char *__msgid1,
+                               const char *__msgid2, unsigned long int __n));
 
 /* Similar to `dcgettext' but select the plural form corresponding to the
    number N.  */
-extern char *dcngettext PARAMS ((const char *__domainname, const char *__msgid1,
-				 const char *__msgid2, unsigned long int __n,
-				 int __category));
+extern char *dcngettext PARAMS((const char *__domainname, const char *__msgid1,
+                                const char *__msgid2, unsigned long int __n, int __category));
 
 
 /* Set the current default message catalog to DOMAINNAME.
    If DOMAINNAME is null, return the current default.
    If DOMAINNAME is "", reset to the default of "messages".  */
-extern char *textdomain PARAMS ((const char *__domainname));
+extern char *textdomain PARAMS((const char *__domainname));
 
 /* Specify that the DOMAINNAME message catalog will be found
    in DIRNAME rather than in the system locale data base.  */
-extern char *bindtextdomain PARAMS ((const char *__domainname,
-				     const char *__dirname));
+extern char *bindtextdomain PARAMS((const char *__domainname, const char *__dirname));
 
 /* Specify the character encoding in which the messages from the
    DOMAINNAME message catalog will be returned.  */
-extern char *bind_textdomain_codeset PARAMS ((const char *__domainname,
-					      const char *__codeset));
+extern char *bind_textdomain_codeset PARAMS((const char *__domainname, const char *__codeset));
 
 
 /* Optimized version of the functions above.  */
 #if defined __OPTIMIZED
 /* These are macros, but could also be inline functions.  */
 
-# define gettext(msgid)							      \
-  dgettext (NULL, msgid)
+#define gettext(msgid) dgettext(NULL, msgid)
 
-# define dgettext(domainname, msgid)					      \
-  dcgettext (domainname, msgid, LC_MESSAGES)
+#define dgettext(domainname, msgid) dcgettext(domainname, msgid, LC_MESSAGES)
 
-# define ngettext(msgid1, msgid2, n)					      \
-  dngettext (NULL, msgid1, msgid2, n)
+#define ngettext(msgid1, msgid2, n) dngettext(NULL, msgid1, msgid2, n)
 
-# define dngettext(domainname, msgid1, msgid2, n)			      \
-  dcngettext (domainname, msgid1, msgid2, n, LC_MESSAGES)
+#define dngettext(domainname, msgid1, msgid2, n)                               \
+  dcngettext(domainname, msgid1, msgid2, n, LC_MESSAGES)
 
 #endif /* Optimizing. */
 
