@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 #ifndef KEYMAP_H
 #define KEYMAP_H
@@ -27,9 +27,9 @@
 /* type for key storage, the rest of mutt works fine with int type */
 typedef short keycode_t;
 
-void km_bind (char *, int, int, char *, char *);
-void km_bindkey (char *, int, int);
-int km_dokey (int);
+void km_bind(char *, int, int, char *, char *);
+void km_bindkey(char *, int, int);
+int km_dokey(int);
 
 void init_extended_keys(void);
 
@@ -45,11 +45,11 @@ struct keymap_t
   keycode_t *keys;       /* key sequence */
 };
 
-int km_expand_key (char *, size_t, struct keymap_t *);
-struct keymap_t *km_find_func (int, int);
-void km_init (void);
-void km_error_key (int);
-void mutt_what_key (void);
+int km_expand_key(char *, size_t, struct keymap_t *);
+struct keymap_t *km_find_func(int, int);
+void km_init(void);
+void km_error_key(int);
+void mutt_what_key(void);
 
 enum
 {
@@ -64,7 +64,7 @@ enum
   MENU_POST,
   MENU_QUERY,
 
-  
+
   MENU_PGP,
   MENU_SMIME,
 
@@ -72,11 +72,10 @@ enum
   MENU_KEY_SELECT_PGP,
   MENU_KEY_SELECT_SMIME,
 #endif
-  
+
 #ifdef MIXMASTER
   MENU_MIX,
 #endif
-
 
 
   MENU_MAX
@@ -92,12 +91,12 @@ extern const struct mapping_t Menus[];
 
 struct binding_t
 {
-  char *name;	/* name of the function */
-  int op;	/* function id number */
-  char *seq;	/* default key binding */
+  char *name; /* name of the function */
+  int op;     /* function id number */
+  char *seq;  /* default key binding */
 };
 
-const struct binding_t *km_get_table (int menu);
+const struct binding_t *km_get_table(int menu);
 
 extern const struct binding_t OpGeneric[];
 extern const struct binding_t OpPost[];

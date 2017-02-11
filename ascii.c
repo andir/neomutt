@@ -27,27 +27,27 @@
  */
 
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #include <stdio.h>
 #include <stdlib.h>
 #include "ascii.h"
 
-int ascii_strcasecmp (const char *a, const char *b)
+int ascii_strcasecmp(const char *a, const char *b)
 {
   int i;
-  
+
   if (a == b)
     return 0;
   if (a == NULL && b)
     return -1;
   if (b == NULL && a)
     return 1;
-  
+
   for (;; a++, b++)
   {
-    if ((i = tolower (*a) - tolower (*b)))
+    if ((i = tolower(*a) - tolower(*b)))
       return i;
     /* test for NUL here rather that in the for loop in order to detect unqual
      * length strings (see http://dev.mutt.org/trac/ticket/3601)
@@ -55,26 +55,26 @@ int ascii_strcasecmp (const char *a, const char *b)
     if (!*a)
       break;
   }
-  
+
   return 0;
 }
 
-int ascii_strncasecmp (const char *a, const char *b, int n)
+int ascii_strncasecmp(const char *a, const char *b, int n)
 {
   int i, j;
-  
+
   if (a == b)
     return 0;
   if (a == NULL && b)
     return -1;
   if (b == NULL && a)
     return 1;
-  
+
   for (j = 0; (*a || *b) && j < n; a++, b++, j++)
   {
-    if ((i = tolower (*a) - tolower (*b)))
+    if ((i = tolower(*a) - tolower(*b)))
       return i;
   }
-  
+
   return 0;
 }

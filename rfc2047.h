@@ -14,16 +14,16 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
-char *mutt_choose_charset (const char *fromcode, const char *charsets,
-		      char *u, size_t ulen, char **d, size_t *dlen);
-int convert_nonmime_string (char **);
+char *mutt_choose_charset(const char *fromcode, const char *charsets, char *u,
+                          size_t ulen, char **d, size_t *dlen);
+int convert_nonmime_string(char **);
 
-void _rfc2047_encode_string (char **, int, int);
-void rfc2047_encode_adrlist (ADDRESS *, const char *);
+void _rfc2047_encode_string(char **, int, int);
+void rfc2047_encode_adrlist(ADDRESS *, const char *);
 
-#define rfc2047_encode_string(a) _rfc2047_encode_string (a, 0, 32);
+#define rfc2047_encode_string(a) _rfc2047_encode_string(a, 0, 32);
 
-void rfc2047_decode (char **);
-void rfc2047_decode_adrlist (ADDRESS *);
+void rfc2047_decode(char **);
+void rfc2047_decode_adrlist(ADDRESS *);

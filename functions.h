@@ -1,20 +1,20 @@
 /*
  * Copyright (C) 1996-2000,2002 Michael R. Elkins <me@mutt.org>
- * 
+ *
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation; either version 2 of the License, or
  *     (at your option) any later version.
- * 
+ *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
  *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  *     GNU General Public License for more details.
- * 
+ *
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 /*
  * This file contains the structures needed to parse ``bind'' commands, as
@@ -31,12 +31,13 @@
  */
 
 #ifdef _MAKEDOC
-# include "config.h"
-# include "doc/makedoc-defs.h"
+#include "config.h"
+#include "doc/makedoc-defs.h"
 #endif
 
-const struct binding_t OpGeneric[] = { /* map: generic */
-  /*
+const struct binding_t OpGeneric[] =
+    {/* map: generic */
+     /*
   ** <para>
   ** The <emphasis>generic</emphasis> menu is not a real menu, but specifies common functions
   ** (such as movement) available in all menus except for <emphasis>pager</emphasis> and
@@ -44,7 +45,7 @@ const struct binding_t OpGeneric[] = { /* map: generic */
   ** bindings for all menus (except as noted).
   ** </para>
   */
-  // clang-format off
+     // clang-format off
   { "top-page",		OP_TOP_PAGE,		"H" },
   { "next-entry",	OP_NEXT_ENTRY,		"j" },
   { "previous-entry",	OP_PREV_ENTRY,		"k" },
@@ -62,7 +63,7 @@ const struct binding_t OpGeneric[] = { /* map: generic */
   { "next-line",	OP_NEXT_LINE,		">" },
   { "previous-line",	OP_PREV_LINE,		"<" },
   { "half-up",		OP_HALF_UP,		"[" },
-  { "half-down", 	OP_HALF_DOWN,		"]" },
+  { "half-down",  OP_HALF_DOWN,		"]" },
   { "help",		OP_HELP,		"?" },
   { "tag-prefix",	OP_TAG_PREFIX,		";" },
   { "tag-prefix-cond",	OP_TAG_PREFIX_COND,	NULL },
@@ -235,7 +236,7 @@ const struct binding_t OpPager[] = { /* map: pager */
   { "delete-message",	OP_DELETE,			"d" },
   { "delete-thread",	OP_DELETE_THREAD,		"\004" },
   { "delete-subthread",	OP_DELETE_SUBTHREAD,		"\033d" },
-  { "set-flag",  	OP_MAIN_SET_FLAG,		"w" },
+  { "set-flag",   OP_MAIN_SET_FLAG,		"w" },
   { "clear-flag",       OP_MAIN_CLEAR_FLAG,		"W" },
   { "edit",		OP_EDIT_MESSAGE,		"e" },
   { "edit-label",	OP_EDIT_LABEL,			"Y" },
@@ -298,7 +299,7 @@ const struct binding_t OpPager[] = { /* map: pager */
   { "search-toggle",	OP_SEARCH_TOGGLE,		"\\" },
   { "display-address",	OP_DISPLAY_ADDRESS,		"@" },
   { "next-new",		OP_MAIN_NEXT_NEW,		NULL },
-  { "next-new-then-unread", 
+  { "next-new-then-unread",
                         OP_MAIN_NEXT_NEW_THEN_UNREAD,   "\t" },
   { "pipe-message",	OP_PIPE,			"|" },
   { "help",		OP_HELP,			"?" },
@@ -318,7 +319,7 @@ const struct binding_t OpPager[] = { /* map: pager */
   { "next-unread",	OP_MAIN_NEXT_UNREAD,		NULL },
   { "previous-new",	OP_MAIN_PREV_NEW,		NULL },
   { "previous-new-then-unread",
-      			OP_MAIN_PREV_NEW_THEN_UNREAD,   NULL },
+            OP_MAIN_PREV_NEW_THEN_UNREAD,   NULL },
   { "previous-unread",	OP_MAIN_PREV_UNREAD,		NULL },
   { "half-up",		OP_HALF_UP,			NULL },
   { "half-down",	OP_HALF_DOWN,			NULL },
@@ -335,7 +336,7 @@ const struct binding_t OpPager[] = { /* map: pager */
   { "extract-keys",	OP_EXTRACT_KEYS,		"\013" },
   { "forget-passphrase",OP_FORGET_PASSPHRASE,		"\006" },
   { "decrypt-copy",	OP_DECRYPT_COPY,		NULL },
-  { "decrypt-save",    	OP_DECRYPT_SAVE,		NULL },
+  { "decrypt-save",     OP_DECRYPT_SAVE,		NULL },
 
   { "what-key",		OP_WHAT_KEY,		NULL },
   { "quasi-delete",	OP_MAIN_QUASI_DELETE,		NULL },
@@ -441,16 +442,16 @@ const struct binding_t OpCompose[] = { /* map: compose */
   { "pipe-entry",	OP_PIPE,			"|" },
 
   { "attach-key",	OP_COMPOSE_ATTACH_KEY,		"\033k" },
-  { "pgp-menu",		OP_COMPOSE_PGP_MENU,		"p" 	},
+  { "pgp-menu",		OP_COMPOSE_PGP_MENU,		"p"   },
 
   { "forget-passphrase",OP_FORGET_PASSPHRASE,		"\006"  },
 
-  { "smime-menu",	OP_COMPOSE_SMIME_MENU,		"S" 	},
+  { "smime-menu",	OP_COMPOSE_SMIME_MENU,		"S"   },
 
 #ifdef MIXMASTER
   { "mix",		OP_COMPOSE_MIX,			"M" },
 #endif
-  
+
   { NULL,		0,				NULL }
 };
 
@@ -465,7 +466,7 @@ const struct binding_t OpAlias[] = { /* map: alias */
   { "undelete-entry",	OP_UNDELETE,	"u" },
   { NULL,		0,		NULL }
 };
-  
+
 
 /* The file browser */
 const struct binding_t OpBrowser[] = { /* map: browser */
@@ -476,7 +477,7 @@ const struct binding_t OpBrowser[] = { /* map: browser */
   { "sort-reverse",	OP_SORT_REVERSE,	"O" },
   { "select-new",	OP_BROWSER_NEW_FILE,	"N" },
   { "check-new",	OP_CHECK_NEW,		NULL },
-  { "toggle-mailboxes", OP_TOGGLE_MAILBOXES, 	"\t" },
+  { "toggle-mailboxes", OP_TOGGLE_MAILBOXES,  "\t" },
 #ifdef USE_NNTP
   { "reload-active",	OP_LOAD_ACTIVE,		NULL },
   { "subscribe-pattern", OP_SUBSCRIBE_PATTERN,	NULL },
@@ -552,7 +553,7 @@ const struct binding_t OpPgp[] = { /* map: pgp */
 const struct binding_t OpSmime[] = { /* map: smime */
 #ifdef CRYPT_BACKEND_GPGME
   { "verify-key",    OP_VERIFY_KEY,             "c" },
-  { "view-name",     OP_VIEW_ID,	        "%" },
+  { "view-name",     OP_VIEW_ID,          "%" },
 #endif
   { NULL,	0,	NULL }
 };
@@ -565,10 +566,10 @@ const struct binding_t OpMix[] = { /* map: mixmaster */
   { "accept",		OP_MIX_USE,	"\r" },
   { "append",		OP_MIX_APPEND,	"a"       },
   { "insert",		OP_MIX_INSERT,	"i"       },
-  { "delete",		OP_MIX_DELETE,  "d"	  },
+  { "delete",		OP_MIX_DELETE,  "d"   },
   { "chain-prev",	OP_MIX_CHAIN_PREV, "<left>" },
   { "chain-next",	OP_MIX_CHAIN_NEXT, "<right>" },
-  { NULL, 		0, 		NULL }
+  { NULL,     0,    NULL }
 };
 #endif /* MIXMASTER */
 // clang-format on

@@ -24,34 +24,34 @@
 #define _MUTT_MENU_H_ 1
 
 #include "keymap.h"
-#include "mutt_regex.h"
 #include "mutt_curses.h"
+#include "mutt_regex.h"
 
-#define REDRAW_INDEX		(1)
-#define REDRAW_MOTION		(1<<1)
-#define REDRAW_MOTION_RESYNCH	(1<<2)
-#define REDRAW_CURRENT		(1<<3)
-#define REDRAW_STATUS		(1<<4)
-#define REDRAW_FULL		(1<<5)
-#define REDRAW_BODY		(1<<6)
-#define REDRAW_SIGWINCH		(1<<7)
+#define REDRAW_INDEX (1)
+#define REDRAW_MOTION (1 << 1)
+#define REDRAW_MOTION_RESYNCH (1 << 2)
+#define REDRAW_CURRENT (1 << 3)
+#define REDRAW_STATUS (1 << 4)
+#define REDRAW_FULL (1 << 5)
+#define REDRAW_BODY (1 << 6)
+#define REDRAW_SIGWINCH (1 << 7)
 #ifdef USE_SIDEBAR
-#define REDRAW_SIDEBAR		(1<<8)
+#define REDRAW_SIDEBAR (1 << 8)
 #endif
 
 #define MUTT_MODEFMT "-- Mutt: %s"
 
 typedef struct menu_t
 {
-  char *title;   /* the title of this menu */
-  char *help;    /* quickref for the current menu */
-  void *data;    /* extra data for the current menu */
-  int current;   /* current entry */
-  int max;       /* the number of entries in the menu */
-  int redraw;	/* when to redraw the screen */
-  int menu;	/* menu definition for keymap entries. */
+  char *title; /* the title of this menu */
+  char *help;  /* quickref for the current menu */
+  void *data;  /* extra data for the current menu */
+  int current; /* current entry */
+  int max;     /* the number of entries in the menu */
+  int redraw;  /* when to redraw the screen */
+  int menu;    /* menu definition for keymap entries. */
   int offset;  /* row offset within the window to start the index */
-  int pagelen;	/* number of entries per screen */
+  int pagelen; /* number of entries per screen */
   int tagprefix;
   int is_mailbox_list;
   mutt_window_t *indexwin;
@@ -64,69 +64,69 @@ typedef struct menu_t
    * normal menu movement keys. This can cause problems with scrolling, if 
    * prompt keys override movement keys.
    */
-  char **dialog;	/* dialog lines themselves */
-  char *prompt;		/* prompt for user, similar to mutt_multi_choice */
-  char *keys;		/* keys used in the prompt */
-  
-  /* callback to generate an index line for the requested element */
-  void (*make_entry) (char *, size_t, struct menu_t *, int);
-  
-  /* how to search the menu */
-  int (*search) (struct menu_t *, regex_t *re, int n);
+  char **dialog; /* dialog lines themselves */
+  char *prompt;  /* prompt for user, similar to mutt_multi_choice */
+  char *keys;    /* keys used in the prompt */
 
-  int (*tag) (struct menu_t *, int i, int m);
+  /* callback to generate an index line for the requested element */
+  void (*make_entry)(char *, size_t, struct menu_t *, int);
+
+  /* how to search the menu */
+  int (*search)(struct menu_t *, regex_t *re, int n);
+
+  int (*tag)(struct menu_t *, int i, int m);
 
   /* color pair to be used for the requested element 
    * (default function returns ColorDefs[MT_COLOR_NORMAL])
    */
-  int (*color) (int i);
-   
+  int (*color)(int i);
+
   /* the following are used only by mutt_menuLoop() */
-  int top;		/* entry that is the top of the current page */
-  int oldcurrent;	/* for driver use only. */
-  int searchDir;	/* direction of search */
-  int tagged;		/* number of tagged entries */
+  int top;        /* entry that is the top of the current page */
+  int oldcurrent; /* for driver use only. */
+  int searchDir;  /* direction of search */
+  int tagged;     /* number of tagged entries */
 } MUTTMENU;
 
-void mutt_menu_init (void);
-void menu_jump (MUTTMENU *);
-void menu_redraw_full (MUTTMENU *);
+void mutt_menu_init(void);
+void menu_jump(MUTTMENU *);
+void menu_redraw_full(MUTTMENU *);
 #ifdef USE_SIDEBAR
-void menu_redraw_sidebar (MUTTMENU *);
+void menu_redraw_sidebar(MUTTMENU *);
 #endif
-void menu_redraw_index (MUTTMENU *);
-void menu_redraw_status (MUTTMENU *);
-void menu_redraw_motion (MUTTMENU *);
-void menu_redraw_current (MUTTMENU *);
-int  menu_redraw (MUTTMENU *);
-void menu_first_entry (MUTTMENU *);
-void menu_last_entry (MUTTMENU *);
-void menu_top_page (MUTTMENU *);
-void menu_bottom_page (MUTTMENU *);
-void menu_middle_page (MUTTMENU *);
-void menu_next_page (MUTTMENU *);
-void menu_prev_page (MUTTMENU *);
-void menu_next_line (MUTTMENU *);
-void menu_prev_line (MUTTMENU *);
-void menu_half_up (MUTTMENU *);
-void menu_half_down (MUTTMENU *);
-void menu_current_top (MUTTMENU *);
-void menu_current_middle (MUTTMENU *);
-void menu_current_bottom (MUTTMENU *);
-void menu_check_recenter (MUTTMENU *);
-void menu_status_line (char *, size_t, MUTTMENU *, const char *);
-short mutt_ts_capability (void);
-void mutt_ts_status (char *);
-void mutt_ts_icon (char *);
+void menu_redraw_index(MUTTMENU *);
+void menu_redraw_status(MUTTMENU *);
+void menu_redraw_motion(MUTTMENU *);
+void menu_redraw_current(MUTTMENU *);
+int menu_redraw(MUTTMENU *);
+void menu_first_entry(MUTTMENU *);
+void menu_last_entry(MUTTMENU *);
+void menu_top_page(MUTTMENU *);
+void menu_bottom_page(MUTTMENU *);
+void menu_middle_page(MUTTMENU *);
+void menu_next_page(MUTTMENU *);
+void menu_prev_page(MUTTMENU *);
+void menu_next_line(MUTTMENU *);
+void menu_prev_line(MUTTMENU *);
+void menu_half_up(MUTTMENU *);
+void menu_half_down(MUTTMENU *);
+void menu_current_top(MUTTMENU *);
+void menu_current_middle(MUTTMENU *);
+void menu_current_bottom(MUTTMENU *);
+void menu_check_recenter(MUTTMENU *);
+void menu_status_line(char *, size_t, MUTTMENU *, const char *);
+short mutt_ts_capability(void);
+void mutt_ts_status(char *);
+void mutt_ts_icon(char *);
 
-MUTTMENU *mutt_new_menu (int);
-void mutt_menuDestroy (MUTTMENU **);
-int mutt_menuLoop (MUTTMENU *);
+MUTTMENU *mutt_new_menu(int);
+void mutt_menuDestroy(MUTTMENU **);
+int mutt_menuLoop(MUTTMENU *);
 
 /* used in both the index and pager index to make an entry. */
-void index_make_entry (char *, size_t, struct menu_t *, int);
-int index_color (int);
+void index_make_entry(char *, size_t, struct menu_t *, int);
+int index_color(int);
 
-int mutt_limit_current_thread (HEADER *h);
+int mutt_limit_current_thread(HEADER *h);
 
 #endif /* _MUTT_MENU_H_ */

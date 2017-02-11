@@ -19,8 +19,8 @@
 #ifndef _VERSION_H_
 #define _VERSION_H_
 
-void print_version (void);
-void print_copyright (void);
-int feature_enabled (const char *name);
+void print_version(void);
+void print_copyright(void);
+int feature_enabled(const char *name);
 
 #endif /* _VERSION_H_ */

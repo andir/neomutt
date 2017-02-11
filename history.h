@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with this program; if not, write to the Free Software
  *     Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
- */ 
+ */
 
 #ifndef _HISTORY_H
 #define _HISTORY_H
@@ -41,8 +41,8 @@ void mutt_read_histfile(void);
 void mutt_history_add(history_class_t, const char *, int);
 char *mutt_history_next(history_class_t);
 char *mutt_history_prev(history_class_t);
-void mutt_reset_history_state (history_class_t);
-int mutt_history_at_scratch (history_class_t);
-void mutt_history_save_scratch (history_class_t, const char *);
+void mutt_reset_history_state(history_class_t);
+int mutt_history_at_scratch(history_class_t);
+void mutt_history_save_scratch(history_class_t, const char *);
 
 #endif

@@ -1,19 +1,19 @@
 #if HAVE_CONFIG_H
-# include "config.h"
+#include "config.h"
 #endif
 
 #ifndef HAVE_WC_FUNCS
 
-#include <sys/types.h>
 #include <errno.h>
+#include <sys/types.h>
 
 #ifndef EILSEQ
 #define EILSEQ EINVAL
 #endif
 
-int mutt_wctoutf8 (char *s, unsigned int c, size_t buflen)
+int mutt_wctoutf8(char *s, unsigned int c, size_t buflen)
 {
-  if (c < (1 << 7)) 
+  if (c < (1 << 7))
   {
     if (s && buflen >= 1)
       *s++ = c;
@@ -22,7 +22,7 @@ int mutt_wctoutf8 (char *s, unsigned int c, size_t buflen)
   else if (c < (1 << 11))
   {
     if (s && buflen >= 2)
-     {
+    {
       *s++ = 0xc0 | (c >> 6);
       *s++ = 0x80 | (c & 0x3f);
     }

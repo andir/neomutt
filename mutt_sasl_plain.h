@@ -43,7 +43,6 @@
  * mutt_sasl_plain_msg(buf, sizeof(buf), "AUTH PLAIN", NULL, user, pass);
  */
 size_t mutt_sasl_plain_msg(char *buf, size_t buflen, const char *cmd,
-                           const char *authz, const char *user,
-                           const char *pass);
+                           const char *authz, const char *user, const char *pass);
 
 #endif /* _MUTT_SASL_PLAIN_H_ */
