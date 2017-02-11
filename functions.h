@@ -44,6 +44,7 @@ const struct binding_t OpGeneric[] = { /* map: generic */
   ** bindings for all menus (except as noted).
   ** </para>
   */
+  // clang-format off
   { "top-page",		OP_TOP_PAGE,		"H" },
   { "next-entry",	OP_NEXT_ENTRY,		"j" },
   { "previous-entry",	OP_PREV_ENTRY,		"k" },
@@ -570,3 +571,4 @@ const struct binding_t OpMix[] = { /* map: mixmaster */
   { NULL, 		0, 		NULL }
 };
 #endif /* MIXMASTER */
+// clang-format on
