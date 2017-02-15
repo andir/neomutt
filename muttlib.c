@@ -1358,9 +1358,6 @@ void mutt_FormatString (char *dest,		/* output buffer */
     {
       BUFFER *srcbuf, *word, *command;
       char    srccopy[LONG_STRING];
-#ifdef DEBUG
-      int     i = 0;
-#endif
 
       mutt_debug (3, "fmtpipe = %s\n", src);
 

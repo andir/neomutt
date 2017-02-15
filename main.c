@@ -101,9 +101,6 @@ options:\n\
   -c <address>\tspecify a carbon-copy (CC) address\n\
   -D\t\tprint the value of all variables to stdout\n\
   -D -S\t\tlike -D, but hide the value of sensitive variables"));
-#if DEBUG
-  puts (_("  -d <level>\tlog debugging output to ~/.muttdebug0"));
-#endif
   puts (_(
 "  -E\t\tedit the draft (-H) or include (-i) file\n\
   -e <command>\tspecify a command to be executed after initialization\n\
@@ -304,16 +301,7 @@ int main (int argc, char **argv, char **environ)
 	break;
 
       case 'd':
-#ifdef DEBUG
-	if (mutt_atoi (optarg, &debuglevel) < 0 || debuglevel <= 0)
-	{
-	  fprintf (stderr, _("Error: value '%s' is invalid for -d.\n"), optarg);
-	  return 1;
-	}
-	printf (_("Debugging at level %d.\n"), debuglevel);
-#else
 	printf (_("DEBUG was not defined during compilation.  Ignored.\n"));
-#endif
 	break;
 
       case 'E':

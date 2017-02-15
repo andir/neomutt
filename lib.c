@@ -1034,31 +1034,6 @@ mutt_strsysexit(int e)
   return sysexits_h[i].str;
 }
 
-#ifdef DEBUG
-FILE *debugfile;
-int debuglevel;
-
-void mutt_debug (int level, const char *fmt, ...)
-{
-  va_list ap;
-  time_t now = time (NULL);
-  static char buf[23] = "";
-  static time_t last = 0;
-
-  if (debuglevel < level || !debugfile)
-    return;
-
-  if (now > last)
-  {
-    strftime (buf, sizeof (buf), "%Y-%m-%d %H:%M:%S", localtime (&now));
-    last = now;
-  }
-  fprintf (debugfile, "[%s] ", buf);
-  va_start (ap, fmt);
-  vfprintf (debugfile, fmt, ap);
-  va_end (ap);
-}
-#endif
 
 int mutt_atos (const char *str, short *dst)
 {

@@ -235,10 +235,6 @@ int imap_read_literal (FILE* fp, IMAP_DATA* idata, long bytes, progress_t* pbar)
 
     if (pbar && !(pos % 1024))
       mutt_progress_update (pbar, pos, -1);
-#ifdef DEBUG
-    if (debuglevel >= IMAP_LOG_LTRL)
-      fputc (c, debugfile);
-#endif
   }
 
   return 0;
@@ -718,28 +714,6 @@ static int imap_open_mailbox (CONTEXT* ctx)
     ctx->readonly = 1;
   }
 
-#ifdef DEBUG
-  /* dump the mailbox flags we've found */
-  if (debuglevel > 2)
-  {
-    if (!idata->flags)
-      mutt_debug (3, "No folder flags found\n");
-    else
-    {
-      LIST* t = idata->flags;
-
-      mutt_debug (3, "Mailbox flags: ");
-
-      t = t->next;
-      while (t)
-      {
-        mutt_debug (3, "[%s] ", t->data);
-        t = t->next;
-      }
-      mutt_debug (3, "\n");
-    }
-  }
-#endif
 
   if (!(mutt_bit_isset(idata->ctx->rights, MUTT_ACL_DELETE) ||
         mutt_bit_isset(idata->ctx->rights, MUTT_ACL_SEEN) ||

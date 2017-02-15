@@ -1623,20 +1623,6 @@ static int parse_alias (BUFFER *buf, BUFFER *s, unsigned long data, BUFFER *err)
   mutt_group_context_add_adrlist (gc, tmp->addr);
   mutt_alias_add_reverse (tmp);
 
-#ifdef DEBUG
-  if (debuglevel >= 2) 
-  {
-    ADDRESS *a;
-    /* A group is terminated with an empty address, so check a->mailbox */
-    for (a = tmp->addr; a && a->mailbox; a = a->next)
-    {
-      if (!a->group)
-        mutt_debug (3, "parse_alias:   %s\n", a->mailbox);
-      else
-        mutt_debug (3, "parse_alias:   Group %s\n", a->mailbox);
-    }
-  }
-#endif
   mutt_group_context_destroy (&gc);
   return 0;
   
@@ -3560,28 +3546,6 @@ int mutt_getvaluebyname (const char *name, const struct mapping_t *map)
   return (-1);
 }
 
-#ifdef DEBUG
-static void start_debug (void)
-{
-  int i;
-  char buf[_POSIX_PATH_MAX];
-  char buf2[_POSIX_PATH_MAX];
-
-  /* rotate the old debug logs */
-  for (i=3; i>=0; i--)
-  {
-    snprintf (buf, sizeof(buf), "%s/.muttdebug%d", NONULL(Homedir), i);
-    snprintf (buf2, sizeof(buf2), "%s/.muttdebug%d", NONULL(Homedir), i+1);
-    rename (buf, buf2);
-  }
-  if ((debugfile = safe_fopen(buf, "w")) != NULL)
-  {
-    setbuf (debugfile, NULL); /* don't buffer the debugging output! */
-    mutt_debug (1, "NeoMutt/%s (%s) debugging at level %d\n",
-                PACKAGE_VERSION, MUTT_VERSION, debuglevel);
-  }
-}
-#endif
 
 static int mutt_execute_commands (LIST *p)
 {
@@ -3714,11 +3678,6 @@ void mutt_init (int skip_sys_rc, LIST *commands)
     Shell = safe_strdup ((p = getenv ("SHELL")) ? p : "/bin/sh");
   }
 
-#ifdef DEBUG
-  /* Start up debugging mode if requested */
-  if (debuglevel > 0)
-    start_debug ();
-#endif
 
   /* And about the host... */
 

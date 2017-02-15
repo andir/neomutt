@@ -337,11 +337,6 @@ int rfc3676_handler (BODY * a, STATE * s)
  */
 void rfc3676_space_stuff (HEADER* hdr)
 {
-#if DEBUG
-  int lc = 0;
-  size_t len = 0;
-  unsigned char c = '\0';
-#endif
   FILE *in = NULL, *out = NULL;
   char buf[LONG_STRING];
   char tmpfile[_POSIX_PATH_MAX];
@@ -365,19 +360,6 @@ void rfc3676_space_stuff (HEADER* hdr)
   {
     if (ascii_strncmp ("From ", buf, 5) == 0 || buf[0] == ' ') {
       fputc (' ', out);
-#if DEBUG
-      lc++;
-      len = mutt_strlen (buf);
-      if (len > 0)
-      {
-        c = buf[len-1];
-        buf[len-1] = '\0';
-      }
-      mutt_debug (4, "f=f: line %d needs space-stuffing: '%s'\n",
-                  lc, buf);
-      if (len > 0)
-        buf[len-1] = c;
-#endif
     }
     fputs (buf, out);
   }

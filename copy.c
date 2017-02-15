@@ -586,18 +586,6 @@ _mutt_copy_message (FILE *fpout, FILE *fpin, HEADER *hdr, BODY *body,
       if (copy_delete_attach (body, fpin, fpout, date))
 	return -1;
 
-#ifdef DEBUG
-      {
-	LOFF_T fail = ((ftello (fpout) - new_offset) - new_length);
-
-	if (fail)
-	{
-	  mutt_error ("The length calculation was wrong by %ld bytes", fail);
-	  new_length += fail;
-	  mutt_sleep (1);
-	}
-      }
-#endif
 
       /* Update original message if we are sync'ing a mailfolder */ 
       if (flags & MUTT_CM_UPDATE)

@@ -121,11 +121,7 @@ static struct compile_options comp_opts[] =
 #else
   { "CRYPT_BACKEND_GPGME", 0 },
 #endif
-#ifdef DEBUG
-  { "DEBUG", 1 },
-#else
   { "DEBUG", 0 },
-#endif
 #ifdef DL_STANDALONE
   { "DL_STANDALONE", 1 },
 #else
