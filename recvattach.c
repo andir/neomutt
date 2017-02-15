@@ -300,8 +300,6 @@ const char *mutt_attach_fmt (char *dest,
 	  ch = dispchar[aptr->content->disposition];
 	else
 	{
-	  mutt_debug (1, "ERROR: invalid content-disposition %d\n",
-	              aptr->content->disposition);
 	  ch = '!';
 	}
 	snprintf (dest, destlen, "%c", ch);

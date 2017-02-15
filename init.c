@@ -250,13 +250,11 @@ int mutt_extract_token (BUFFER *dest, BUFFER *tok, int flags)
       } while (pc && *pc != '`');
       if (!pc)
       {
-        mutt_debug (1, "mutt_get_token: mismatched backticks\n");
 	return (-1);
       }
       cmd = mutt_substrdup (tok->dptr, pc);
       if ((pid = mutt_create_filter (cmd, NULL, &fp, NULL)) < 0)
       {
-        mutt_debug (1, "mutt_get_token: unable to fork command: %s", cmd);
 	FREE (&cmd);
 	return (-1);
       }
@@ -768,9 +766,6 @@ static mbchar_table *parse_mbchar_table (const char *s)
   {
     if (k == (size_t)(-1) || k == (size_t)(-2))
     {
-      mutt_debug (1,
-                  "parse_mbchar_table: mbrtowc returned %d converting %s in %s\n",
-                  (k == (size_t)(-1)) ? -1 : -2, s, t->orig_str);
       if (k == (size_t)(-1))
         memset (&mbstate, 0, sizeof (mbstate));
       k = (k == (size_t)(-1)) ? 1 : slen;
@@ -1196,13 +1191,9 @@ static int parse_attach_list (BUFFER *buf, BUFFER *s, LIST **ldata, BUFFER *err)
 
   /* Find the last item in the list that data points to. */
   lastp = NULL;
-  mutt_debug (5, "parse_attach_list: ldata = %p, *ldata = %p\n",
-              (void *)ldata, (void *)*ldata);
   for (listp = *ldata; listp; listp = listp->next)
   {
     a = (ATTACH_MATCH *)listp->data;
-    mutt_debug (5, "parse_attach_list: skipping %s/%s\n",
-                a->major, a->minor);
     lastp = listp;
   }
 
@@ -1254,8 +1245,6 @@ static int parse_attach_list (BUFFER *buf, BUFFER *s, LIST **ldata, BUFFER *err)
       return -1;
     }
 
-    mutt_debug (5, "parse_attach_list: added %s/%s [%d]\n",
-                a->major, a->minor, a->major_int);
 
     listp = safe_malloc(sizeof(LIST));
     listp->data = (char *)a;
@@ -1312,12 +1301,8 @@ static int parse_unattach_list (BUFFER *buf, BUFFER *s, LIST **ldata, BUFFER *er
     for(lp = *ldata; lp; )
     {
       a = (ATTACH_MATCH *)lp->data;
-      mutt_debug (5, "parse_unattach_list: check %s/%s [%d] : %s/%s [%d]\n",
-                  a->major, a->minor, a->major_int, tmp, minor, major);
       if (a->major_int == major && !mutt_strcasecmp(minor, a->minor))
       {
-        mutt_debug (5, "parse_unattach_list: removed %s/%s [%d]\n",
-                    a->major, a->minor, a->major_int);
 	regfree(&a->minor_rx);
 	FREE(&a->major);
 
@@ -1605,7 +1590,6 @@ static int parse_alias (BUFFER *buf, BUFFER *s, unsigned long data, BUFFER *err)
   }
 
   mutt_extract_token (buf, s, MUTT_TOKEN_QUOTE | MUTT_TOKEN_SPACE | MUTT_TOKEN_SEMICOLON);
-  mutt_debug (3, "parse_alias: Second token is '%s'.\n", buf->data);
 
   tmp->addr = mutt_parse_adrlist (tmp->addr, buf->data);
 
@@ -2783,7 +2767,6 @@ static int source_rc (const char *rcfile_path, BUFFER *err)
       }
   }
 
-  mutt_debug (2, "Reading configuration file '%s'.\n", rcfile);
 
   if ((f = mutt_open_read (rcfile, &pid)) == NULL)
   {
@@ -4032,7 +4015,6 @@ int parse_tag_transforms (BUFFER *b, BUFFER *s, unsigned long data, BUFFER *err)
     /* avoid duplicates */
     tmp = hash_find(TagTransforms, tag);
     if (tmp) {
-      mutt_debug (3, "tag transform '%s' already registered as '%s'\n", tag, tmp);
       FREE(&tag);
       FREE(&transform);
       continue;
@@ -4063,7 +4045,6 @@ int parse_tag_formats (BUFFER *b, BUFFER *s, unsigned long data, BUFFER *err)
     /* avoid duplicates */
     tmp = hash_find(TagFormats, format);
     if (tmp) {
-      mutt_debug (3, "tag format '%s' already registered as '%s'\n", format, tmp);
       FREE(&tag);
       FREE(&format);
       continue;

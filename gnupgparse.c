@@ -139,7 +139,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
   else
     memset (&tmp, 0, sizeof (tmp));
 
-  mutt_debug (2, "parse_pub_line: buf = `%s'\n", buf);
 
   for (p = buf; p; p = pend)
   {
@@ -156,7 +155,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
     {
       case 1:			/* record type */
       {
-        mutt_debug (2, "record type: %s\n", p);
 
 	if (!mutt_strcmp (p, "pub"))
 	  is_pub = 1;
@@ -180,7 +178,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
       }
       case 2:			/* trust info */
       {
-        mutt_debug (2, "trust info: %s\n", p);
 
 	switch (*p)
 	{				/* look only at the first letter */
@@ -214,7 +211,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
       }
       case 3:			/* key length  */
       {
-        mutt_debug (2, "key len: %s\n", p);
 
 	if (!(*is_subkey && option (OPTPGPIGNORESUB)) &&
 	    mutt_atos (p, &tmp.keylen) < 0)
@@ -223,7 +219,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
       }
       case 4:			/* pubkey algo */
       {
-        mutt_debug (2, "pubkey algorithm: %s\n", p);
 
 	if (!(*is_subkey && option (OPTPGPIGNORESUB)))
 	{
@@ -237,7 +232,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
       }
       case 5:			/* 16 hex digits with the long keyid. */
       {
-        mutt_debug (2, "key id: %s\n", p);
 
 	if (!(*is_subkey && option (OPTPGPIGNORESUB)))
 	  mutt_str_replace (&tmp.keyid, p);
@@ -249,7 +243,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
 	char tstr[11];
 	struct tm time;
 
-	mutt_debug (2, "time stamp: %s\n", p);
 
 	if (!p)
 	  break;
@@ -308,7 +301,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
 	if (!is_uid && (*is_subkey && option (OPTPGPIGNORESUB)))
 	  break;
 
-	mutt_debug (2, "user ID: %s\n", NONULL (p));
 
 	uid = safe_calloc (sizeof (pgp_uid_t), 1);
 	fix_uid (p);
@@ -328,7 +320,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
       case 11:			/* signature class  */
         break;
       case 12:			/* key capabilities */
-	mutt_debug (2, "capabilities info: %s\n", p);
 	
 	while(*p)
 	  {
@@ -377,7 +368,6 @@ static pgp_key_t parse_pub_line (char *buf, int *is_subkey, pgp_key_t k)
   return k;
 
 bail:
-  mutt_debug (5, "parse_pub_line: invalid number: '%s'\n", p);
   return NULL;
 }
 

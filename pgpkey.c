@@ -843,20 +843,15 @@ pgp_key_t pgp_getkeybyaddr (ADDRESS * a, short abilities, pgp_ring_t keyring,
   if (!keys)
     return NULL;
 
-  mutt_debug (5, "pgp_getkeybyaddr: looking for %s <%s>.",
-              a->personal, a->mailbox);
 
 
   for (k = keys; k; k = kn)
   {
     kn = k->next;
 
-    mutt_debug (5, "  looking at key: %s\n", pgp_keyid (k));
 
     if (abilities && !(k->flags & abilities))
     {
-      mutt_debug (5, "  insufficient abilities: Has %x, want %x\n",
-                  k->flags, abilities);
       continue;
     }
 
@@ -985,26 +980,20 @@ pgp_key_t pgp_getkeybystr (char *p, short abilities, pgp_ring_t keyring)
 
     match = 0;
 
-    mutt_debug (5, "pgp_getkeybystr: matching \"%s\" against key %s:\n",
-                p, pgp_long_keyid (k));
 
     if (!*p ||
         (pfcopy && mutt_strcasecmp (pfcopy, k->fingerprint) == 0) ||
         (pl && mutt_strcasecmp (pl, pgp_long_keyid (k)) == 0) ||
         (ps && mutt_strcasecmp (ps, pgp_short_keyid (k)) == 0))
     {
-      mutt_debug (5, "\t\tmatch.\n");
       match = 1;
     }
     else
     {
       for (a = k->address; a; a = a->next)
       {
-        mutt_debug (5, "pgp_getkeybystr: matching \"%s\" against key %s, \"%s\":\n",
-                    p, pgp_long_keyid (k), NONULL (a->addr));
         if (mutt_stristr (a->addr, p))
         {
-          mutt_debug (5, "\t\tmatch.\n");
           match = 1;
           break;
         }

@@ -53,7 +53,6 @@ int mutt_complete (char *s, size_t slen)
   char imap_path[LONG_STRING];
 #endif
 
-  mutt_debug (2, "mutt_complete: completing %s\n", s);
 
 #ifdef USE_NNTP
   if (option (OPTNEWS))
@@ -186,8 +185,6 @@ int mutt_complete (char *s, size_t slen)
 
   if (dirp == NULL)
   {
-    mutt_debug (1, "mutt_complete(): %s: %s (errno %d).\n",
-                exp_dirpart, strerror (errno), errno);
     return (-1);
   }
 

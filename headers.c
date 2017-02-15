@@ -80,7 +80,6 @@ void mutt_edit_headers (const char *editor,
   stat (path, &st);
   if (mtime == st.st_mtime)
   {
-    mutt_debug (1, "ci_edit_headers(): temp file was not modified.\n");
     /* the file has not changed! */
     mutt_unlink (path);
     return;

@@ -199,12 +199,9 @@ static int pgp_copy_checksig (FILE *fpin, FILE *fpout)
     {
       if (regexec (PgpGoodSign.rx, line, 0, NULL, 0) == 0)
       {
-        mutt_debug (2, "pgp_copy_checksig: \"%s\" matches regexp.\n", line);
 	rv = 0;
       }
       else
-        mutt_debug (2, "pgp_copy_checksig: \"%s\" doesn't match regexp.\n",
-                    line);
       
       if (strncmp (line, "[GNUPG:] ", 9) == 0)
 	continue;
@@ -215,7 +212,6 @@ static int pgp_copy_checksig (FILE *fpin, FILE *fpout)
   }
   else
   {
-    mutt_debug (2, "pgp_copy_checksig: No pattern.\n");
     mutt_copy_stream (fpin, fpout);
     rv = 1;
   }
@@ -241,20 +237,14 @@ static int pgp_check_decryption_okay (FILE *fpin)
     {
       if (regexec (PgpDecryptionOkay.rx, line, 0, NULL, 0) == 0)
       {
-        mutt_debug (2, "pgp_check_decryption_okay: \"%s\" matches regexp.\n",
-                    line);
         rv = 0;
         break;
       }
-      else
-        mutt_debug (2, "pgp_check_decryption_okay: \"%s\" doesn't match regexp.\n",
-                    line);
     }
     FREE (&line);
   }
   else
   {
-    mutt_debug (2, "pgp_check_decryption_okay: No pattern.\n");
     rv = 1;
   }
 
@@ -534,8 +524,6 @@ int pgp_application_pgp_handler (BODY *m, STATE *s)
 	int c;
 	char *expected_charset = gpgcharset && *gpgcharset ? gpgcharset : "utf-8";
 
-	mutt_debug (4, "pgp: recoding inline from [%s] to [%s]\n",
-	            expected_charset, Charset);
 
 	rewind (pgpout);
 	state_set_prefix (s);
@@ -743,7 +731,6 @@ int pgp_verify_one (BODY *sigbdy, STATE *s, const char *tempfile)
     if ((rv = mutt_wait_filter (thepid)))
       badsig = -1;
     
-     mutt_debug (1, "pgp_verify_one: mutt_wait_filter returned %d.\n", rv);
   }
 
   safe_fclose (&pgperr);
@@ -753,7 +740,6 @@ int pgp_verify_one (BODY *sigbdy, STATE *s, const char *tempfile)
   mutt_unlink (sigfile);
   mutt_unlink (pgperrfile);
 
-  mutt_debug (1, "pgp_verify_one: returning %d.\n", badsig);
   
   return badsig;
 }

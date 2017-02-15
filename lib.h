@@ -132,7 +132,6 @@ extern void (*mutt_error) (const char *, ...);
 void mutt_exit (int);
 
 
-#define mutt_debug(...) do { } while (0)
 
 
 /* Exit values used in send_msg() */

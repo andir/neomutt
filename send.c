@@ -1422,8 +1422,6 @@ ci_send_message (int flags,		/* send mode */
 
     if (!tempfp)
     {
-      mutt_debug (1, "newsend_message: can't create tempfile %s (errno=%d)\n",
-                  msg->content->filename, errno);
       mutt_perror (msg->content->filename);
       goto cleanup;
     }
@@ -1444,9 +1442,6 @@ ci_send_message (int flags,		/* send mode */
      * have their aliases expanded.
      */
 
-    if (msg->env->from)
-        mutt_debug (5, "ci_send_message: msg->env->from before set_reverse_name: %s\n",
-                    msg->env->from->mailbox);
     msg->env->from = set_reverse_name (cur->env);
   }
   if (cur && option (OPTREPLYWITHXORIG) && !(flags & (SENDPOSTPONED|SENDRESEND|SENDFORWARD)))
@@ -1465,8 +1460,6 @@ ci_send_message (int flags,		/* send mode */
       msg->env->from = cur->env->x_original_to;
       /* Not more than one from address */
       msg->env->from->next = NULL;
-      mutt_debug (5, "ci_send_message: msg->env->from extracted from X-Original-To: header: %s\n",
-                  msg->env->from->mailbox);
     }
   }
 

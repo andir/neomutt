@@ -1050,7 +1050,6 @@ int mutt_index_menu (void)
 
       op = km_dokey (MENU_MAIN);
 
-      mutt_debug (4, "mutt_index_menu[%d]: Got op %d\n", __LINE__, op);
 
       if (op == -1) {
         mutt_timeout_hook();
@@ -1887,7 +1886,6 @@ int mutt_index_menu (void)
         break;
 
       case OP_MAIN_WINDOWED_VFOLDER_BACKWARD:
-        mutt_debug (2, "OP_MAIN_WINDOWED_VFOLDER_BACKWARD\n");
         if (NotmuchQueryWindowDuration <= 0)
         {
           mutt_message (_("Windowed queries disabled."));
@@ -1923,7 +1921,6 @@ int mutt_index_menu (void)
             mutt_message (_("Failed to create query, aborting."));
         else
         {
-          mutt_debug (2, "nm: + windowed query (%s)\n", buf);
           main_change_folder(menu, op, buf, sizeof (buf), &oldcount, &index_hint, 0);
         }
         break;
@@ -2998,7 +2995,6 @@ int mutt_index_menu (void)
                by whatever they typed at the prompt.) */
 	    snprintf(buf, sizeof(buf), _("Message bound to %s."), str);
 	    mutt_message(buf);
-	    mutt_debug (1, "Mark: %s => %s\n", str, macro);
 	  }
 	}
 	else

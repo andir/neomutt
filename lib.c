@@ -486,8 +486,6 @@ int safe_rename (const char *src, const char *target)
      *
      */
     
-    mutt_debug (1, "safe_rename: link (%s, %s) failed: %s (%d)\n",
-                src, target, strerror (errno), errno);
 
     /*
      * FUSE may return ENOSYS. VFAT may return EPERM. FreeBSD's
@@ -502,14 +500,10 @@ int safe_rename (const char *src, const char *target)
 #endif
 	)
     {
-      mutt_debug (1, "safe_rename: trying rename...\n");
       if (rename (src, target) == -1) 
       {
-        mutt_debug (1, "safe_rename: rename (%s, %s) failed: %s (%d)\n",
-                    src, target, strerror (errno), errno);
 	return -1;
       }
-      mutt_debug (1, "safe_rename: rename succeeded.\n");
     
       return 0;
     }
@@ -523,15 +517,11 @@ int safe_rename (const char *src, const char *target)
   
   if (lstat (src, &ssb) == -1)
   {
-    mutt_debug (1, "safe_rename: can't stat %s: %s (%d)\n",
-                src, strerror (errno), errno);
     return -1;
   }
   
   if (lstat (target, &tsb) == -1)
   {
-    mutt_debug (1, "safe_rename: can't stat %s: %s (%d)\n",
-                src, strerror (errno), errno);
     return -1;
   }
 
@@ -542,8 +532,6 @@ int safe_rename (const char *src, const char *target)
 
   if (compare_stat (&ssb, &tsb) == -1)
   {
-    mutt_debug (1, "safe_rename: stat blocks for %s and %s diverge; "
-                "pretending EEXIST.\n", src, target);
     errno = EEXIST;
     return -1;
   }
@@ -555,8 +543,6 @@ int safe_rename (const char *src, const char *target)
 
   if (unlink (src) == -1) 
   {
-    mutt_debug (1, "safe_rename: unlink (%s) failed: %s (%d)\n",
-                src, strerror (errno), errno);
   }
   
 
@@ -589,14 +575,12 @@ static int mutt_mkwrapdir (const char *path, char *newfile, size_t nflen,
   snprintf (newdir, ndlen, "%s/%s", parent, ".muttXXXXXX");
   if (mkdtemp(newdir) == NULL)
   {
-      mutt_debug (1, "mutt_mkwrapdir: mkdtemp() failed\n");
       return -1;
   }
   
   if (snprintf (newfile, nflen, "%s/%s", newdir, NONULL(basename)) >= nflen)
   {
       rmdir(newdir);
-      mutt_debug (1, "mutt_mkwrapdir: string was truncated\n");
       return -1;
   }
   return 0;  
@@ -613,7 +597,6 @@ int mutt_rmtree (const char* path)
 
   if (!(dirp = opendir (path)))
   {
-    mutt_debug (1, "mutt_rmtree: error opening directory %s\n", path);
     return -1;
   }
   while ((de = readdir (dirp)))

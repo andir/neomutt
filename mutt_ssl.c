@@ -107,7 +107,6 @@ int mutt_ssl_starttls (CONNECTION* conn)
    */
   if (! (ssldata->ctx = SSL_CTX_new (SSLv23_client_method())))
   {
-    mutt_debug (1, "mutt_ssl_starttls: Error allocating SSL_CTX\n");
     goto bail_ssldata;
   }
 #ifdef SSL_OP_NO_TLSv1_2
@@ -131,8 +130,6 @@ int mutt_ssl_starttls (CONNECTION* conn)
 #endif
   if (! SSL_CTX_set_options(ssldata->ctx, ssl_options))
   {
-    mutt_debug (1, "mutt_ssl_starttls: Error setting options to %ld\n",
-                ssl_options);
     goto bail_ctx;
   }
 
@@ -140,32 +137,29 @@ int mutt_ssl_starttls (CONNECTION* conn)
   {
     if (! SSL_CTX_set_default_verify_paths (ssldata->ctx))
     {
-      mutt_debug (1, "mutt_ssl_starttls: Error setting default verify paths\n");
       goto bail_ctx;
     }
   }
 
   if (SslCertFile && ! SSL_CTX_load_verify_locations (ssldata->ctx, SslCertFile, NULL))
-    mutt_debug (1, "mutt_ssl_starttls: Error loading trusted certificates\n");
+  {
+  }
 
   ssl_get_client_cert(ssldata, conn);
 
   if (SslCiphers) {
     if (!SSL_CTX_set_cipher_list (ssldata->ctx, SslCiphers)) {
-      mutt_debug (1, "mutt_ssl_starttls: Could not select preferred ciphers\n");
       goto bail_ctx;
     }
   }
 
   if (! (ssldata->ssl = SSL_new (ssldata->ctx)))
   {
-    mutt_debug (1, "mutt_ssl_starttls: Error allocating SSL\n");
     goto bail_ctx;
   }
 
   if (SSL_set_fd (ssldata->ssl, conn->fd) != 1)
   {
-    mutt_debug (1, "mutt_ssl_starttls: Error setting fd\n");
     goto bail_ssl;
   }
 
@@ -397,14 +391,14 @@ static int ssl_socket_open (CONNECTION * conn)
   {
     if (! SSL_CTX_set_default_verify_paths (data->ctx))
     {
-      mutt_debug (1, "ssl_socket_open: Error setting default verify paths\n");
       mutt_socket_close (conn);
       return -1;
     }
   }
 
   if (SslCertFile && ! SSL_CTX_load_verify_locations (data->ctx, SslCertFile, NULL))
-    mutt_debug (1, "ssl_socket_open: Error loading trusted certificates\n");
+  {
+  }
 
   ssl_get_client_cert(data, conn);
 
@@ -438,13 +432,11 @@ static int ssl_negotiate (CONNECTION *conn, sslsockdata* ssldata)
 
   if ((HostExDataIndex = SSL_get_ex_new_index (0, "host", NULL, NULL, NULL)) == -1)
   {
-    mutt_debug (1, "failed to get index for application specific data\n");
     return -1;
   }
 
   if (! SSL_set_ex_data (ssldata->ssl, HostExDataIndex, conn->account.host))
   {
-    mutt_debug (1, "failed to save hostname in SSL structure\n");
     return -1;
   }
 
@@ -573,7 +565,6 @@ static void ssl_err (sslsockdata *data, int err)
     errmsg = "unknown error";
   }
 
-  mutt_debug (1, "SSL error: %s\n", errmsg);
 }
 
 static void ssl_dprint_err_stack (void)
@@ -691,14 +682,12 @@ static int check_certificate_by_digest (X509 *peercert)
   {
     if (X509_cmp_current_time (X509_get_notBefore (peercert)) >= 0)
     {
-      mutt_debug (2, "Server certificate is not yet valid\n");
       mutt_error (_("Server certificate is not yet valid"));
       mutt_sleep (2);
       return 0;
     }
     if (X509_cmp_current_time (X509_get_notAfter (peercert)) <= 0)
     {
-      mutt_debug (2, "Server certificate has expired");
       mutt_error (_("Server certificate has expired"));
       mutt_sleep (2);
       return 0;
@@ -870,7 +859,6 @@ out:
 
 static int ssl_cache_trusted_cert (X509 *c)
 {
-  mutt_debug (1, "ssl_cache_trusted_cert: trusted\n");
   if (!SslSessionCerts)
     SslSessionCerts = sk_X509_new_null();
   return (sk_X509_push (SslSessionCerts, X509_dup(c)));
@@ -889,12 +877,10 @@ static int ssl_verify_callback (int preverify_ok, X509_STORE_CTX *ctx)
 
   if (! (ssl = X509_STORE_CTX_get_ex_data (ctx, SSL_get_ex_data_X509_STORE_CTX_idx ())))
   {
-    mutt_debug (1, "ssl_verify_callback: failed to retrieve SSL structure from X509_STORE_CTX\n");
     return 0;
   }
   if (! (host = SSL_get_ex_data (ssl, HostExDataIndex)))
   {
-    mutt_debug (1, "ssl_verify_callback: failed to retrieve hostname from SSL structure\n");
     return 0;
   }
 
@@ -902,14 +888,10 @@ static int ssl_verify_callback (int preverify_ok, X509_STORE_CTX *ctx)
   pos = X509_STORE_CTX_get_error_depth (ctx);
   len = sk_X509_num (X509_STORE_CTX_get_chain (ctx));
 
-  mutt_debug (1, "ssl_verify_callback: checking cert chain entry %s (preverify: %d)\n",
-              X509_NAME_oneline (X509_get_subject_name (cert),
-                                 buf, sizeof (buf)), preverify_ok);
 
   /* check session cache first */
   if (check_certificate_cache (cert))
   {
-    mutt_debug (2, "ssl_verify_callback: using cached certificate\n");
     return 1;
   }
 
@@ -923,7 +905,6 @@ static int ssl_verify_callback (int preverify_ok, X509_STORE_CTX *ctx)
       mutt_sleep (2);
       return interactive_check_cert (cert, pos, len);
     }
-    mutt_debug (2, "ssl_verify_callback: hostname check passed\n");
   }
 
   if (!preverify_ok)
@@ -931,7 +912,6 @@ static int ssl_verify_callback (int preverify_ok, X509_STORE_CTX *ctx)
     /* automatic check from user's database */
     if (SslCertFile && check_certificate_by_digest (cert))
     {
-      mutt_debug (2, "ssl_verify_callback: digest check passed\n");
       return 1;
     }
 
@@ -1059,7 +1039,6 @@ static int interactive_check_cert (X509 *cert, int idx, int len)
   unset_option(OPTIGNOREMACROEVENTS);
   mutt_menuDestroy (&menu);
   set_option (OPTNEEDREDRAW);
-  mutt_debug (2, "ssl interactive_check_cert: done=%d\n", done);
   return (done == 2);
 }
 
@@ -1067,7 +1046,6 @@ static void ssl_get_client_cert(sslsockdata *ssldata, CONNECTION *conn)
 {
   if (SslClientCert)
   {
-    mutt_debug (2, "Using client certificate %s\n", SslClientCert);
     SSL_CTX_set_default_passwd_cb_userdata(ssldata->ctx, &conn->account);
     SSL_CTX_set_default_passwd_cb(ssldata->ctx, ssl_passwd_cb);
     SSL_CTX_use_certificate_file(ssldata->ctx, SslClientCert, SSL_FILETYPE_PEM);
@@ -1085,8 +1063,6 @@ static int ssl_passwd_cb(char *buf, int size, int rwflag, void *userdata)
   if (mutt_account_getuser (account))
     return 0;
 
-  mutt_debug (2, "ssl_passwd_cb: getting password for %s@%s:%u\n",
-              account->user, account->host, account->port);
 
   if (mutt_account_getpass (account))
     return 0;

@@ -143,13 +143,11 @@ static PARAMETER *parse_parameters (const char *s)
   const char *p;
   size_t i;
 
-  mutt_debug (2, "parse_parameters: `%s'\n", s);
   
   while (*s)
   {
     if ((p = strpbrk (s, "=;")) == NULL)
     {
-      mutt_debug (1, "parse_parameters: malformed parameter: %s\n", s);
       goto bail;
     }
 
@@ -166,7 +164,6 @@ static PARAMETER *parse_parameters (const char *s)
        */
       if (i == 0)
       {
-        mutt_debug (1, "parse_parameters: missing attribute: %s\n", s);
 	new = NULL;
       }
       else
@@ -222,9 +219,6 @@ static PARAMETER *parse_parameters (const char *s)
       {
 	new->value = safe_strdup (buffer);
 
-	mutt_debug (2, "parse_parameter: `%s' = `%s'\n",
-	            new->attribute ? new->attribute : "",
-	            new->value ? new->value : "");
 
 	/* Add this parameter to the list */
 	if (head)
@@ -238,7 +232,6 @@ static PARAMETER *parse_parameters (const char *s)
     }
     else
     {
-      mutt_debug (1, "parse_parameters(): parameter with no value: %s\n", s);
       s = p;
     }
 
@@ -429,14 +422,11 @@ BODY *mutt_read_mime_header (FILE *fp, int digest)
       c = skip_email_wsp(c + 1);
       if (!*c)
       {
-        mutt_debug (1, "mutt_read_mime_header(): skipping empty header field: %s\n",
-                    line);
 	continue;
       }
     }
     else
     {
-      mutt_debug (1, "read_mime_header: bogus MIME header: %s\n", line);
       break;
     }
 
@@ -812,7 +802,6 @@ time_t mutt_parse_date (const char *s, HEADER *h)
 	  sec = 0;
 	else
 	{
-	  mutt_debug (1, "parse_date: could not process time format: %s\n", t);
 	  return(-1);
 	}
 	tm.tm_hour = hour;
@@ -877,7 +866,6 @@ time_t mutt_parse_date (const char *s, HEADER *h)
 
   if (count < 4) /* don't check for missing timezone */
   {
-    mutt_debug (1, "parse_date(): error parsing date format, using received time\n");
     return (-1);
   }
 
@@ -1463,8 +1451,6 @@ ENVELOPE *mutt_read_rfc822_header (FILE *f, HEADER *hdr, short user_hdrs,
 	  e->spam = mutt_buffer_from("");
 	}
 
-	if (e->spam && e->spam->data)
-          mutt_debug (5, "p822: spam = %s\n", e->spam->data);
       }
     }
 
@@ -1508,14 +1494,12 @@ ENVELOPE *mutt_read_rfc822_header (FILE *f, HEADER *hdr, short user_hdrs,
 
     if (hdr->received < 0)
     {
-      mutt_debug (1, "read_rfc822_header(): resetting invalid received time to 0\n");
       hdr->received = 0;
     }
 
     /* check for missing or invalid date */
     if (hdr->date_sent <= 0)
     {
-      mutt_debug (1, "read_rfc822_header(): no date found, using received time from msg separator\n");
       hdr->date_sent = hdr->received;
     }
   }
@@ -1563,19 +1547,13 @@ static int count_body_parts_check(LIST **checklist, BODY *b, int dflt)
   for (type = *checklist; type; type = type->next)
   {
     a = (ATTACH_MATCH *)type->data;
-    mutt_debug (5, "cbpc: %s %d/%s ?? %s/%s [%d]... ",
-                dflt ? "[OK]   " : "[EXCL] ",
-                b->type, b->subtype ? b->subtype : "*",
-                a->major, a->minor, a->major_int);
     if ((a->major_int == TYPEANY || a->major_int == b->type) &&
         (!b->subtype || !regexec(&a->minor_rx, b->subtype, 0, NULL, 0)))
     {
-      mutt_debug (5, "yes\n");
       return 1;
     }
     else
     {
-      mutt_debug (5, "no\n");
     }
   }
 
@@ -1600,11 +1578,6 @@ static int count_body_parts (BODY *body, int flags)
     AT_COUNT("default");
     shallrecurse = 0;
 
-    mutt_debug (5, "bp: desc=\"%s\"; fn=\"%s\", type=\"%d/%s\"\n",
-                bp->description ? bp->description : ("none"),
-                bp->filename ? bp->filename :
-                  bp->d_filename ? bp->d_filename : "(none)",
-                bp->type, bp->subtype ? bp->subtype : "*");
 
     if (bp->type == TYPEMESSAGE)
     {
@@ -1664,18 +1637,14 @@ static int count_body_parts (BODY *body, int flags)
       count++;
     bp->attach_qualifies = shallcount ? 1 : 0;
 
-    mutt_debug (5, "cbp: %p shallcount = %d\n", (void *)bp, shallcount);
 
     if (shallrecurse)
     {
-      mutt_debug (5, "cbp: %p pre count = %d\n", (void *)bp, count);
       bp->attach_count = count_body_parts(bp->parts, flags & ~MUTT_PARTS_TOPLEVEL);
       count += bp->attach_count;
-      mutt_debug (5, "cbp: %p post count = %d\n", (void *)bp, count);
     }
   }
 
-  mutt_debug (5, "bp: return %d\n", count < 0 ? 0 : count);
   return count < 0 ? 0 : count;
 }
 

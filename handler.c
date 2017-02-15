@@ -324,9 +324,6 @@ void mutt_decode_base64 (STATE *s, long len, int istext, iconv_t cd)
     if (i != 4)
     {
       /* "i" may be zero if there is trailing whitespace, which is not an error */
-      if (i != 0)
-        mutt_debug (2, "%s:%d [mutt_decode_base64()]: "
-                    "didn't get a multiple of 4 chars.\n", __FILE__, __LINE__);
       break;
     }
 
@@ -1317,8 +1314,6 @@ static int multipart_handler (BODY *a, STATE *s)
     if (rc)
     {
       mutt_error (_("One or more parts of this message could not be displayed"));
-      mutt_debug (1, "Failed on attachment #%d, type %s/%s.\n",
-                  count, TYPE(p), NONULL (p->subtype));
     }
     
     if ((s->flags & MUTT_REPLYING)
@@ -1668,7 +1663,6 @@ static int run_decode_and_handler (BODY *b, STATE *s, handler_t handler, int pla
      s->fpout = open_memstream (&temp, &tempsize);
      if (!s->fpout) {
        mutt_error (_("Unable to open memory stream!"));
-       mutt_debug (1, "Can't open memory stream.\n");
        return -1;
      }
 #else
@@ -1676,7 +1670,6 @@ static int run_decode_and_handler (BODY *b, STATE *s, handler_t handler, int pla
       if ((s->fpout = safe_fopen (tempfile, "w")) == NULL)
       {
         mutt_error (_("Unable to open temporary file!"));
-        mutt_debug (1, "Can't open %s.\n", tempfile);
         return -1;
       }
 #endif
@@ -1736,8 +1729,6 @@ static int run_decode_and_handler (BODY *b, STATE *s, handler_t handler, int pla
 
     if (rc)
     {
-      mutt_debug (1, "Failed on attachment of type %s/%s.\n",
-                  TYPE(b), NONULL (b->subtype));
     }
 
     if (decode)
@@ -1853,8 +1844,6 @@ int mutt_body_handler (BODY *b, STATE *s)
     if (b->encoding != ENC7BIT && b->encoding != ENC8BIT
         && b->encoding != ENCBINARY)
     {
-      mutt_debug (1, "Bad encoding type %d for multipart entity, "
-                  "assuming 7 bit\n", b->encoding);
       b->encoding = ENC7BIT;
     }
   }
@@ -1908,8 +1897,6 @@ int mutt_body_handler (BODY *b, STATE *s)
   s->flags = oflags | (s->flags & MUTT_FIRSTDONE);
   if (rc)
   {
-    mutt_debug (1, "Bailing on attachment of type %s/%s.\n",
-                TYPE(b), NONULL (b->subtype));
   }
 
   return rc;

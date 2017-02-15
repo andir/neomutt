@@ -51,7 +51,6 @@ static pop_auth_res_t pop_auth_sasl (POP_DATA *pop_data, const char *method)
 
   if (mutt_sasl_client_new (pop_data->conn, &saslconn) < 0)
   {
-    mutt_debug (1, "pop_auth_sasl: Error allocating SASL connection.\n");
     return POP_A_FAILURE;
   }
 
@@ -68,8 +67,6 @@ static pop_auth_res_t pop_auth_sasl (POP_DATA *pop_data, const char *method)
 
   if (rc != SASL_OK && rc != SASL_CONTINUE)
   {
-    mutt_debug (1, "pop_auth_sasl: Failure starting authentication exchange. "
-                "No shared mechanisms?\n");
 
     /* SASL doesn't support suggested mechanisms, so fall back */
     return POP_A_UNAVAIL;
@@ -113,7 +110,6 @@ static pop_auth_res_t pop_auth_sasl (POP_DATA *pop_data, const char *method)
     if (!mutt_strncmp (inbuf, "+ ", 2)
         && sasl_decode64 (inbuf+2, strlen (inbuf+2), buf, bufsize - 1, &len) != SASL_OK)
     {
-      mutt_debug (1, "pop_auth_sasl: error base64-decoding server response.\n");
       goto bail;
     }
 
@@ -147,7 +143,6 @@ static pop_auth_res_t pop_auth_sasl (POP_DATA *pop_data, const char *method)
       }
       if (sasl_encode64 (pc, olen, buf, bufsize, &olen) != SASL_OK)
       {
-        mutt_debug (1, "pop_auth_sasl: error base64-encoding client response.\n");
 	goto bail;
       }
     }
@@ -267,14 +262,12 @@ static pop_auth_res_t pop_auth_user (POP_DATA *pop_data, const char *method)
     {
       pop_data->cmd_user = 1;
 
-      mutt_debug (1, "pop_auth_user: set USER capability\n");
     }
 
     if (ret == -2)
     {
       pop_data->cmd_user = 0;
 
-      mutt_debug (1, "pop_auth_user: unset USER capability\n");
       snprintf (pop_data->err_msg, sizeof (pop_data->err_msg),
               _("Command USER is not supported by server."));
     }
@@ -342,7 +335,6 @@ int pop_authenticate (POP_DATA* pop_data)
       comma = strchr (method, ':');
       if (comma)
 	*comma++ = '\0';
-      mutt_debug (2, "pop_authenticate: Trying method %s\n", method);
       authenticator = pop_authenticators;
 
       while (authenticator->authenticate)
@@ -383,7 +375,6 @@ int pop_authenticate (POP_DATA* pop_data)
   else
   {
     /* Fall back to default: any authenticator */
-    mutt_debug (2, "pop_authenticate: Using any available method.\n");
     authenticator = pop_authenticators;
 
     while (authenticator->authenticate)

@@ -59,8 +59,6 @@ static ADDRESS *mutt_expand_aliases_r (ADDRESS *a, LIST **expn)
 	{
 	  if (mutt_strcmp (a->mailbox, u->data) == 0) /* alias already found */
 	  {
-	    mutt_debug (1, "mutt_expand_aliases_r(): loop in alias found for '%s'\n",
-		        a->mailbox);
 	    i = 1;
 	    break;
 	  }
@@ -620,60 +618,45 @@ int mutt_addr_is_user (ADDRESS *addr)
   /* NULL address is assumed to be the user. */
   if (!addr)
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, NULL address\n");
     return 1;
   }
   if (!addr->mailbox)
   {
-    mutt_debug (5, "mutt_addr_is_user: no, no mailbox\n");
     return 0;
   }
 
   if (ascii_strcasecmp (addr->mailbox, Username) == 0)
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s = %s\n",
-                addr->mailbox, Username);
     return 1;
   }
   if (string_is_address(addr->mailbox, Username, Hostname))
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s = %s @ %s \n",
-                addr->mailbox, Username, Hostname);
     return 1;
   }
   fqdn = mutt_fqdn (0);
   if (string_is_address(addr->mailbox, Username, fqdn))
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s = %s @ %s \n",
-                addr->mailbox, Username, NONULL(fqdn));
     return 1;
   }
   fqdn = mutt_fqdn (1);
   if (string_is_address(addr->mailbox, Username, fqdn))
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s = %s @ %s \n",
-                addr->mailbox, Username, NONULL(fqdn));
     return 1;
   }
 
   if (From && !ascii_strcasecmp (From->mailbox, addr->mailbox))
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s = %s\n",
-                addr->mailbox, From->mailbox);
     return 1;
   }
 
   if (mutt_match_rx_list (addr->mailbox, Alternates))
   {
-    mutt_debug (5, "mutt_addr_is_user: yes, %s matched by alternates.\n",
-                addr->mailbox);
     if (mutt_match_rx_list (addr->mailbox, UnAlternates))
-      mutt_debug (5, "mutt_addr_is_user: but, %s matched by unalternates.\n",
-                  addr->mailbox);
+    {
+    }
     else
       return 1;
   }
   
-  mutt_debug (5, "mutt_addr_is_user: no, all failed.\n");
   return 0;
 }

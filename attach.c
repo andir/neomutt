@@ -106,7 +106,6 @@ int mutt_compose_attachment (BODY *a)
       if (rfc1524_expand_filename (entry->nametemplate,
 				      a->filename, newfile, sizeof (newfile)))
       {
-	mutt_debug (1, "oldfile: %s\t newfile: %s\n", a->filename, newfile);
 	if (safe_symlink (a->filename, newfile) == -1)
 	{
 	  if (mutt_yesorno (_("Can't match nametemplate, continue?"), MUTT_YES) != MUTT_YES)
@@ -237,7 +236,6 @@ int mutt_edit_attachment (BODY *a)
       if (rfc1524_expand_filename (entry->nametemplate,
 				      a->filename, newfile, sizeof (newfile)))
       {
-	mutt_debug (1, "oldfile: %s\t newfile: %s\n", a->filename, newfile);
 	if (safe_symlink (a->filename, newfile) == -1)
 	{
 	  if (mutt_yesorno (_("Can't match nametemplate, continue?"), MUTT_YES) != MUTT_YES)
@@ -315,8 +313,6 @@ void mutt_check_lookup_list (BODY *b, char *type, int len)
                 n == TYPETEXT ? "text" :
                 n == TYPEVIDEO ? "video" : "other",
                 tmp.subtype);
-      mutt_debug (1, "mutt_check_lookup_list: \"%s\" -> %s\n",
-                  b->filename, type);
     }
     if (tmp.subtype) 
       FREE (&tmp.subtype);
@@ -516,8 +512,6 @@ int mutt_view_attachment (FILE *fp, BODY *a, int flag, HEADER *hdr,
 	decode_state.fpout = safe_fopen(pagerfile, "w");
 	if (!decode_state.fpout)
 	{
-	  mutt_debug (1, "mutt_view_attachment:%d safe_fopen(%s) errno=%d %s\n",
-	              __LINE__, pagerfile, errno, strerror(errno));
 	  mutt_perror(pagerfile);
 	  mutt_sleep(1);
 	  goto return_error;
@@ -525,9 +519,7 @@ int mutt_view_attachment (FILE *fp, BODY *a, int flag, HEADER *hdr,
 	decode_state.fpin = fp;
 	decode_state.flags = MUTT_CHARCONV;
 	mutt_decode_attachment(a, &decode_state);
-	if (fclose(decode_state.fpout) == EOF)
-	  mutt_debug (1, "mutt_view_attachment:%d fclose errno=%d %s\n",
-	              __LINE__, pagerfile, errno, strerror(errno));
+	fclose(decode_state.fpout);
       }
       else
       {
@@ -921,7 +913,6 @@ int mutt_print_attachment (FILE *fp, BODY *a)
     rfc1524_entry *entry;
     int piped = false;
 
-    mutt_debug (2, "Using mailcap...\n");
     
     entry = rfc1524_new_entry ();
     rfc1524_mailcap_lookup (a, type, entry, MUTT_PRINT);
@@ -1009,8 +1000,6 @@ int mutt_print_attachment (FILE *fp, BODY *a)
     if (mutt_decode_save_attachment (fp, a, newfile, MUTT_PRINTING, 0) == 0)
     {
       
-      mutt_debug (2, "successfully decoded %s type attachment to %s\n",
-                  type, newfile);
       
       if ((ifp = fopen (newfile, "r")) == NULL)
       {
@@ -1018,7 +1007,6 @@ int mutt_print_attachment (FILE *fp, BODY *a)
 	goto bail0;
       }
 
-      mutt_debug (2, "successfully opened %s read-only\n", newfile);
       
       mutt_endwin (NULL);
       if ((thepid = mutt_create_filter (NONULL(PrintCmd), &fpout, NULL, NULL)) < 0)
@@ -1027,7 +1015,6 @@ int mutt_print_attachment (FILE *fp, BODY *a)
 	goto bail0;
       }
 
-      mutt_debug (2, "Filter created.\n");
       
       mutt_copy_stream (ifp, fpout);
 

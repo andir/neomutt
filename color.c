@@ -289,8 +289,6 @@ int mutt_alloc_color (int fg, int bg)
 
   init_pair(i, fg, bg);
 
-  mutt_debug (3, "mutt_alloc_color(): Color pairs used so far: %d\n",
-              UserColors);
 
   return (COLOR_PAIR (p->index));
 }
@@ -308,8 +306,6 @@ void mutt_free_color (int fg, int bg)
       if (p->count > 0) return;
 
       UserColors--;
-      mutt_debug (1, "mutt_free_color(): Color pairs used so far: %d\n",
-                  UserColors);
 
       if (p == ColorList)
       {
@@ -451,8 +447,6 @@ mutt_do_uncolor (BUFFER *buf, BUFFER *s, COLOR_LINE **ColorList,
 	  {
             *do_cache = 1;
           }
-          mutt_debug (1, "Freeing pattern \"%s\" from ColorList\n",
-                      tmp->pattern);
           if (last)
 	  {
             last->next = tmp->next;

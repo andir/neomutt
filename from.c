@@ -76,7 +76,6 @@ int is_from (const char *s, char *path, size_t pathlen, time_t *tp)
   if (!*s)
     return 0;
 
-  mutt_debug (3, "\nis_from(): parsing: %s", s);
 
   if (!is_day_name (s))
   {
@@ -105,8 +104,6 @@ int is_from (const char *s, char *path, size_t pathlen, time_t *tp)
       p = strchr(p + 4, ' ');
       if (!p)
       {
-        mutt_debug (1, "is_from(): error parsing what appears to be a "
-                       "pipermail-style obscured return_path: %s\n", s);
 	return 0;
       }
     }
@@ -118,7 +115,6 @@ int is_from (const char *s, char *path, size_t pathlen, time_t *tp)
 	len = pathlen - 1;
       memcpy (path, s, len);
       path[len] = 0;
-      mutt_debug (3, "is_from(): got return path: %s\n", path);
     }
     
     s = p + 1;
@@ -128,7 +124,6 @@ int is_from (const char *s, char *path, size_t pathlen, time_t *tp)
 
     if (!is_day_name (s))
     {
-      mutt_debug (1, "is_from():  expected weekday, got: %s\n", s);
       return 0;
     }
   }
@@ -189,8 +184,6 @@ int is_from (const char *s, char *path, size_t pathlen, time_t *tp)
   if (sscanf (s, "%d", &yr) != 1) return 0;
   tm.tm_year = yr > 1900 ? yr - 1900 : (yr < 70 ? yr + 100 : yr);
   
-  mutt_debug (3, "is_from(): month=%d, day=%d, hr=%d, min=%d, sec=%d, yr=%d.\n",
-              tm.tm_mon, tm.tm_mday, tm.tm_hour, tm.tm_min, tm.tm_sec, tm.tm_year);
 
   tm.tm_isdst = -1;
 

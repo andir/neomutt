@@ -65,8 +65,6 @@ int mutt_socket_open (CONNECTION* conn)
 
   rc = conn->conn_open (conn);
 
-  mutt_debug (2, "Connected to %s:%d on fd=%d\n",
-	      NONULL (conn->account.host), conn->account.port, conn->fd);
 
   return rc;
 }
@@ -76,7 +74,8 @@ int mutt_socket_close (CONNECTION* conn)
   int rc = -1;
 
   if (conn->fd < 0)
-    mutt_debug (1, "mutt_socket_close: Attempt to close closed connection.\n");
+  {
+  }
   else
     rc = conn->conn_close (conn);
 
@@ -92,7 +91,6 @@ int mutt_socket_read (CONNECTION* conn, char* buf, size_t len)
 
   if (conn->fd < 0)
   {
-    mutt_debug (1, "mutt_socket_read: attempt to read from closed connection\n");
     return -1;
   }
 
@@ -114,11 +112,9 @@ int mutt_socket_write_d (CONNECTION *conn, const char *buf, int len, int dbg)
   int rc;
   int sent = 0;
 
-  mutt_debug (dbg, "%d> %s", conn->fd, buf);
 
   if (conn->fd < 0)
   {
-    mutt_debug (1, "mutt_socket_write: attempt to write to closed connection\n");
     return -1;
   }
 
@@ -129,17 +125,11 @@ int mutt_socket_write_d (CONNECTION *conn, const char *buf, int len, int dbg)
   {
     if ((rc = conn->conn_write (conn, buf + sent, len - sent)) < 0)
     {
-      mutt_debug (1, "mutt_socket_write: error writing (%s), closing socket\n",
-                  strerror(errno));
       mutt_socket_close (conn);
 
       return -1;
     }
 
-    if (rc < len - sent)
-      mutt_debug (3, "mutt_socket_write: short write (%d of %d bytes)\n",
-                  rc, len - sent);
-    
     sent += rc;
   }
 
@@ -170,7 +160,6 @@ int mutt_socket_readchar (CONNECTION *conn, char *c)
       conn->available = conn->conn_read (conn, conn->inbuf, sizeof (conn->inbuf));
     else
     {
-      mutt_debug (1, "mutt_socket_readchar: attempt to read from closed connection.\n");
       return -1;
     }
     conn->bufpos = 0;
@@ -213,7 +202,6 @@ int mutt_socket_readln_d (char* buf, size_t buflen, CONNECTION* conn, int dbg)
     i--;
   buf[i] = '\0';
 
-  mutt_debug (dbg, "%d< %s\n", conn->fd, buf);
   
   /* number of bytes read, not strlen */
   return i + 1;
@@ -321,9 +309,7 @@ static int socket_preconnect (void)
 
   if (mutt_strlen (Preconnect))
   {
-    mutt_debug (2, "Executing preconnect: %s\n", Preconnect);
     rc = mutt_system (Preconnect);
-    mutt_debug (2, "Preconnect result: %d\n", rc);
     if (rc)
     {
       save_errno = errno;
@@ -351,7 +337,6 @@ static int socket_connect (int fd, struct sockaddr* sa)
 #endif
   else
   {
-    mutt_debug (1, "Unknown address family!\n");
     return -1;
   }
   
@@ -365,7 +350,6 @@ static int socket_connect (int fd, struct sockaddr* sa)
   if (connect (fd, sa, sa_size) < 0)
   {
       save_errno = errno;
-      mutt_debug (2, "Connection failed. errno: %d...\n", errno);
       SigInt = 0;	/* reset in case we caught SIGINTR while in connect() */
   }
 
